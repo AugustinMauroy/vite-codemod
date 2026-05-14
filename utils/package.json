@@ -1,0 +1,18 @@
+{
+  "name": "@vitejs/codemod-utils",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "imports": {
+    "#/*": "./src/*.ts"
+  },
+  "scripts": {
+    "test": "npx codemod@1.9.3 jssg exec ./tests/test.ts"
+  },
+  "dependencies": {
+    "@jssg/utils": "0.0.7"
+  }
+}

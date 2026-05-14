@@ -17,7 +17,7 @@
   - `@vitejs/migrate-css-minify-to-lightning-css` - [CSS Minification by Lightning CSS](https://vite.dev/guide/migration#css-minification-by-lightning-css)
   - `@vitejs/normalize-commonjs-interop-legacy-option` - [Consistent CommonJS Interop](https://vite.dev/guide/migration#consistent-commonjs-interop)
   - `@vitejs/migrate-require-external-modules` - [Require Calls For Externalized Modules](https://vite.dev/guide/migration#require-calls-for-externalized-modules)
-  - `@vitejs/fix-import-meta-url-polyfill` - [import.meta.url in UMD / IIFE](https://vite.dev/guide/migration#importmetaurl-in-umd--iife)
+  - `@vitejs/fix-import-meta-url-polyfill` - [import.meta.url in UMD / IIFE](https://vite.dev/guide/migration#import-meta-url-in-umd-iife)
   - `@vitejs/migrate-rollup-watch-options` - [Removed build.rollupOptions.watch.chokidar option](https://vite.dev/guide/migration#removed-buildrollupoptionswatchchokidar-option)
   - `@vitejs/migrate-manual-chunks-config` - [Removed object form build.rollupOptions.output.manualChunks](https://vite.dev/guide/migration#removed-object-form-buildrollupoptionsoutputmanualchunks-and-deprecate-function-form-one)
   - `@vitejs/update-plugin-load-transform-moduleType` - [Module Type Support and Auto Detection](https://vite.dev/guide/migration#module-type-support-and-auto-detection)
