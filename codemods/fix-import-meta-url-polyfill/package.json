@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@jssg/utils": "^0.0.7",
-    "@vitejs/codemod-utils": "*"
+    "@vitejs/codemod-utils": "*",
+    "dedent": "^1.7.2"
   }
 }
