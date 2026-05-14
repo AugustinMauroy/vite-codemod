@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/update-plugin-load-transform-moduleType",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

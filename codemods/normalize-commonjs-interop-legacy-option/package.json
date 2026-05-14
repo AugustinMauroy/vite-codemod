@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/normalize-commonjs-interop-legacy-option",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

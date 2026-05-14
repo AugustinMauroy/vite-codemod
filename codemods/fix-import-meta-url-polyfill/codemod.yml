@@ -1,0 +1,18 @@
+schema_version: "1.0"
+name: "@vitejs/fix-import-meta-url-polyfill"
+version: 1.0.0
+description: "Fix import.meta.url polyfill for UMD/IIFE"
+author: "maintainer"
+license: MIT
+workflow: workflow.yaml
+category: migration
+repository: https://github.com/vitejs/vite-codemod
+
+targets:
+  languages:
+    - javascript
+    - typescript
+
+registry:
+  access: public
+  visibility: public

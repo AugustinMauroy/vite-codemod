@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/migrate-transform-index-html-hooks",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

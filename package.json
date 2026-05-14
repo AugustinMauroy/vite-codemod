@@ -1,0 +1,21 @@
+{
+  "name": "vite-codemods",
+  "description": "Codemods for Vite",
+  "type": "module",
+  "scripts": {
+    "pre-commit": "node --run lint && node --run format && node --run typecheck && node --run test",
+    "check": "biome check .",
+    "lint": "biome lint . --fix",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit && echo 'TypeScript type check passed!'",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "workspaces": [
+    "codemods/*"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
+    "@codemod.com/jssg-types": "^1.6.0",
+    "typescript": "^6.0.3"
+  }
+}

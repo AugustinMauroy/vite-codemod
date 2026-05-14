@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/remove-deprecated-hotbroadcaster-types",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

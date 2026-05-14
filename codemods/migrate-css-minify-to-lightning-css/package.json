@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/migrate-css-minify-to-lightning-css",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

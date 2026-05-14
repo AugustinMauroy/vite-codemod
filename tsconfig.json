@@ -1,0 +1,27 @@
+{
+  "include": [
+    "codemods/**/*.ts",
+    "codemods/**/*.tsx",
+    "codemods/**/*.js",
+    "codemods/**/*.jsx"
+  ],
+  "exclude": [
+    "**/tests/**/*"
+  ],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "@codemod.com/jssg-types"
+    ]
+  }
+}

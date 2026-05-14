@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/remove-deprecated-properties",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

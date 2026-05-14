@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/migrate-esbuild-to-oxc-options",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

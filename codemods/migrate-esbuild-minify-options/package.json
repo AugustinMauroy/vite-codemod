@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/migrate-esbuild-minify-options",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/update-resolve-conditions",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

@@ -1,0 +1,18 @@
+schema_version: "1.0"
+name: "@vitejs/migrate-optimize-deps-esbuild-options"
+version: 1.0.0
+description: "Migrate optimizeDeps esbuild options"
+author: "maintainer"
+license: MIT
+workflow: workflow.yaml
+category: migration
+repository: https://github.com/vitejs/vite-codemod
+
+targets:
+  languages:
+    - javascript
+    - typescript
+
+registry:
+  access: public
+  visibility: public

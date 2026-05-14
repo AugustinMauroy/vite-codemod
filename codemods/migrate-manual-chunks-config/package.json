@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/migrate-manual-chunks-config",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

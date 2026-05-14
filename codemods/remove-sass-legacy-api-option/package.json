@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/remove-sass-legacy-api-option",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

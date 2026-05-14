@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/fix-import-meta-url-polyfill",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

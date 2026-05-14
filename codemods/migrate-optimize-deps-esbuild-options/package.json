@@ -1,0 +1,6 @@
+{
+  "name": "@vitejs/migrate-optimize-deps-esbuild-options",
+  "dependencies": {
+    "@jssg/utils": "^0.0.7"
+  }
+}

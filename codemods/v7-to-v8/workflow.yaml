@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/codemod-com/codemod/refs/heads/main/schemas/workflow.json
+
+version: "1"
+
+steps:
+  - name: "Run registry codemod: migrate esbuild to oxc options"
+    codemod:
+      source: "@vitejs/migrate-esbuild-to-oxc-options"
+
+  - name: "Run registry codemod: migrate esbuild minify options"
+    codemod:
+      source: "@vitejs/migrate-esbuild-minify-options"
+
+  - name: "Run registry codemod: migrate optimize deps esbuild options"
+    codemod:
+      source: "@vitejs/migrate-optimize-deps-esbuild-options"
+
+  - name: "Run registry codemod: migrate rollup to rolldown options"
+    codemod:
+      source: "@vitejs/migrate-rollup-to-rolldown-options"
+
+  - name: "Run registry codemod: remove deprecated import.meta.hot accept url"
+    codemod:
+      source: "@vitejs/remove-deprecated-import-meta-hot-accept-url"
+
+  - name: "Run registry codemod: migrate css minify to lightning css"
+    codemod:
+      source: "@vitejs/migrate-css-minify-to-lightning-css"
+
+  - name: "Run registry codemod: normalize commonjs interop legacy option"
+    codemod:
+      source: "@vitejs/normalize-commonjs-interop-legacy-option"
+
+  - name: "Run registry codemod: migrate require external modules"
+    codemod:
+      source: "@vitejs/migrate-require-external-modules"
+
+  - name: "Run registry codemod: fix import.meta.url polyfill"
+    codemod:
+      source: "@vitejs/fix-import-meta-url-polyfill"
+
+  - name: "Run registry codemod: migrate rollup watch options"
+    codemod:
+      source: "@vitejs/migrate-rollup-watch-options"
+
+  - name: "Run registry codemod: migrate manual chunks config"
+    codemod:
+      source: "@vitejs/migrate-manual-chunks-config"
+
+  - name: "Run registry codemod: update plugin load transform module type"
+    codemod:
+      source: "@vitejs/update-plugin-load-transform-moduleType"
