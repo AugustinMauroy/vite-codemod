@@ -1,12 +1,11 @@
-import type { SgNode } from 'codemod:ast-grep';
+import type { SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
-import { getImport } from '@jssg/utils/javascript/imports';
+import { getImport } from "@jssg/utils/javascript/imports";
 
 export function getViteConfig(node: SgNode<JS>): Array<SgNode<JS>> | null {
-	const program =
-		node.is("program")
-			? (node as SgNode<JS, "program">)
-			: (node.getRoot().root() as SgNode<JS, "program">);
+	const program = node.is("program")
+		? (node as SgNode<JS, "program">)
+		: (node.getRoot().root() as SgNode<JS, "program">);
 
 	const defineConfigImport = getImport(program, {
 		type: "named",
@@ -31,7 +30,11 @@ export function getViteConfig(node: SgNode<JS>): Array<SgNode<JS>> | null {
 		},
 	})) {
 		const functionNode = callExpression.field("function");
-		if (!functionNode || functionNode.kind() !== "identifier" || functionNode.text() !== importedAlias) {
+		if (
+			!functionNode ||
+			functionNode.kind() !== "identifier" ||
+			functionNode.text() !== importedAlias
+		) {
 			continue;
 		}
 
@@ -49,4 +52,3 @@ export function getViteConfig(node: SgNode<JS>): Array<SgNode<JS>> | null {
 
 	return configs.length > 0 ? configs : null;
 }
-

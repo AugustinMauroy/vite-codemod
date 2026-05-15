@@ -1,5 +1,5 @@
-type Channels = never[]
+type Channels = never[];
 
-interface RuntimeApi {}
+type RuntimeApi = {};
 
-export type HotTypes = Channels | RuntimeApi
+export type HotTypes = Channels | RuntimeApi;

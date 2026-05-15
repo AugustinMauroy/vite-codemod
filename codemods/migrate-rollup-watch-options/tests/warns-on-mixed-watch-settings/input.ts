@@ -1,16 +1,16 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 const watcher = {
-  usePolling: true,
-}
+	usePolling: true,
+};
 
 export default defineConfig({
-  build: {
-    rollupOptions: {
-      watch: {
-        chokidar: watcher,
-        clearScreen: false,
-      },
-    },
-  },
-})
+	build: {
+		rollupOptions: {
+			watch: {
+				chokidar: watcher,
+				clearScreen: false,
+			},
+		},
+	},
+});

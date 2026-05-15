@@ -1,5 +1,5 @@
-import type { ViteDevServer } from 'vite'
+import type { ViteDevServer } from "vite";
 
-declare const server: ViteDevServer
+declare const server: ViteDevServer;
 
-export const keys = Object.keys(server.config.legacy ?? {})
+export const keys = Object.keys(server.config.legacy ?? {});

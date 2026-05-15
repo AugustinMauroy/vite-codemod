@@ -1,5 +1,5 @@
-import type { ModuleRunnerOptions } from 'vite'
+import type { ModuleRunnerOptions } from "vite";
 
-declare const options: ModuleRunnerOptions
+declare const options: ModuleRunnerOptions;
 
-export const moduleRunner = options
+export const moduleRunner = options;

@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
-const useLegacyMinifier = true
+const useLegacyMinifier = true;
 
 export default defineConfig({
-  build: {
-    cssMinify: useLegacyMinifier ? 'esbuild' : 'lightningcss',
-  },
-})
+	build: {
+		cssMinify: useLegacyMinifier ? "esbuild" : "lightningcss",
+	},
+});

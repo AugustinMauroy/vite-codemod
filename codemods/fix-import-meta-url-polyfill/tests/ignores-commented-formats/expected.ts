@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
 	build: {
 		lib: {
-			entry: 'src/main.ts',
+			entry: "src/main.ts",
 			// formats: ['umd'],
-			formats: ['es'],
+			formats: ["es"],
 		},
 	},
-})
+});

@@ -1,5 +1,5 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from "vite";
 
 export default defineConfig({
-  plugins: [splitVendorChunkPlugin()],
-})
+	plugins: [splitVendorChunkPlugin()],
+});

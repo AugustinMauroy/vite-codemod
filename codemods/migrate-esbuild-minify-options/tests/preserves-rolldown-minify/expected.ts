@@ -1,16 +1,16 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  build: {
-    rolldownOptions: {
-      output: {
-        minify: {
-          compress: {
-            dropConsole: true,
-          },
-          identifiers: true,
-        },
-      },
-    },
-  },
-})
+	build: {
+		rolldownOptions: {
+			output: {
+				minify: {
+					compress: {
+						dropConsole: true,
+					},
+					identifiers: true,
+				},
+			},
+		},
+	},
+});

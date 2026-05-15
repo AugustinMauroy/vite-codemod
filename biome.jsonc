@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-	"files": { "includes": ["."] },
+	"files": { "includes": ["codemods/**/*", "utils/**/*", "!**/tests/*"] },
 	"formatter": { "enabled": true, "lineWidth": 100, "useEditorconfig": true },
 	"linter": { "enabled": true },
 	"javascript": { "formatter": { "quoteStyle": "double" } }

@@ -1,15 +1,15 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  oxc: {
-    define: {
-      __DEV__: 'false',
-    },
-    jsx: {
-      development: true,
-      pragma: 'h',
-      pragmaFrag: 'Fragment',
-      runtime: 'classic',
-    },
-  },
-})
+	oxc: {
+		define: {
+			__DEV__: "false",
+		},
+		jsx: {
+			development: true,
+			pragma: "h",
+			pragmaFrag: "Fragment",
+			runtime: "classic",
+		},
+	},
+});

@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
-const clientConditions = ['browser', 'development']
+const clientConditions = ["browser", "development"];
 
 export default defineConfig({
-  resolve: {
-    conditions: clientConditions,
-  },
-})
+	resolve: {
+		conditions: clientConditions,
+	},
+});

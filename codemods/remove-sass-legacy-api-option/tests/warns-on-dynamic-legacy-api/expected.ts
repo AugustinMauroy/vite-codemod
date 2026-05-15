@@ -1,15 +1,15 @@
 // Expected warning:
 // Warning: Unable to safely migrate dynamic Sass legacy API usage.
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
-const legacyApi = 'legacy'
+const legacyApi = "legacy";
 
 export default defineConfig({
-  css: {
-    preprocessorOptions: {
-      sass: {
-        api: legacyApi,
-      },
-    },
-  },
-})
+	css: {
+		preprocessorOptions: {
+			sass: {
+				api: legacyApi,
+			},
+		},
+	},
+});

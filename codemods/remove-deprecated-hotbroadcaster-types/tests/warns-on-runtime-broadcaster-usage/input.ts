@@ -1,3 +1,3 @@
-import type { HMRBroadcaster } from 'vite'
+import type { HMRBroadcaster } from "vite";
 
-export const broadcaster: HMRBroadcaster | null = null
+export const broadcaster: HMRBroadcaster | null = null;

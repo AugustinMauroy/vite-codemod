@@ -1,11 +1,9 @@
-import dedent from "dedent";
-import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
-import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
-import { getIdentStyle } from "@vitejs/codemod-utils/ast-grep/indent";
-
-import type { SgNode } from "codemod:ast-grep";
-import type { Codemod, Edit } from "codemod:ast-grep";
+import type { Codemod, Edit, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
+import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
+import { getIdentStyle } from "@vitejs/codemod-utils/ast-grep/indent";
+import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
+import dedent from "dedent";
 
 const IMPORT_META_DEFINE = `'import.meta.url': '__vite_import_meta_url__'`;
 
@@ -13,7 +11,12 @@ const INTRO_SNIPPET =
 	"intro: 'var __vite_import_meta_url__ = document.currentScript && document.currentScript.src'";
 
 import type { TextInsertion } from "@vitejs/codemod-utils/ast-grep/object-helpers";
-import { findMatchingBraceIndex, findObjectProperty, normalizeObjectIndent, applyInsertions } from "@vitejs/codemod-utils/ast-grep/object-helpers";
+import {
+	applyInsertions,
+	findMatchingBraceIndex,
+	findObjectProperty,
+	normalizeObjectIndent,
+} from "@vitejs/codemod-utils/ast-grep/object-helpers";
 
 function escapeRegExp(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -39,11 +42,11 @@ function hasPairWithKey(
 			const keyMatches =
 				keyKind === "string"
 					? keyNode.findAll({
-						rule: {
-							kind: "string_fragment",
-							regex: `^${escapeRegExp(keyName)}$`,
-						},
-					}).length > 0
+							rule: {
+								kind: "string_fragment",
+								regex: `^${escapeRegExp(keyName)}$`,
+							},
+						}).length > 0
 					: keyNode.text() === keyName;
 
 			if (!keyMatches) return false;
@@ -153,7 +156,8 @@ function buildObjectInsertion(
 	}
 
 	const needsLeadingLineBreak = !source.slice(0, insertionIndex).endsWith(lineBreak);
-	const injection = (needsLeadingLineBreak ? lineBreak : "") + indentedLines.join(lineBreak) + lineBreak;
+	const injection =
+		(needsLeadingLineBreak ? lineBreak : "") + indentedLines.join(lineBreak) + lineBreak;
 
 	return {
 		index: insertionIndex,
@@ -201,7 +205,14 @@ function buildDefinePolyfillInsertion(
 	const defineBlock = findObjectProperty(configNode, "define");
 
 	if (defineBlock) {
-		return buildObjectInsertion(source, defineBlock.valueNode, `${IMPORT_META_DEFINE},`, indent, lineBreak, configNode.range().start.index);
+		return buildObjectInsertion(
+			source,
+			defineBlock.valueNode,
+			`${IMPORT_META_DEFINE},`,
+			indent,
+			lineBreak,
+			configNode.range().start.index,
+		);
 	}
 
 	const content = dedent`
@@ -210,7 +221,14 @@ function buildDefinePolyfillInsertion(
 		},
 	`;
 
-	return buildObjectInsertion(source, configNode, content, indent, lineBreak, configNode.range().start.index);
+	return buildObjectInsertion(
+		source,
+		configNode,
+		content,
+		indent,
+		lineBreak,
+		configNode.range().start.index,
+	);
 }
 
 // normalizeObjectIndent imported from utils
@@ -245,14 +263,24 @@ const workflow: Codemod<JS> = async (rootNode) => {
 		const insertions: TextInsertion[] = [];
 
 		if (!hasIntroPolyfill(configNode)) {
-			const introInsertion = buildRolldownIntroInsertion(originalText, indent, lineBreak, configNode);
+			const introInsertion = buildRolldownIntroInsertion(
+				originalText,
+				indent,
+				lineBreak,
+				configNode,
+			);
 			if (introInsertion) {
 				insertions.push(introInsertion);
 			}
 		}
 
 		if (!hasImportMetaPolyfill(configNode)) {
-			const defineInsertion = buildDefinePolyfillInsertion(originalText, indent, lineBreak, configNode);
+			const defineInsertion = buildDefinePolyfillInsertion(
+				originalText,
+				indent,
+				lineBreak,
+				configNode,
+			);
 			if (defineInsertion) {
 				insertions.push(defineInsertion);
 			}

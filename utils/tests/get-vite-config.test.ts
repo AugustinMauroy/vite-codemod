@@ -2,7 +2,7 @@ import { ok as assert } from "assert";
 import { parse } from "codemod:ast-grep";
 import type { SgNode } from "codemod:ast-grep";
 import type JS from "@codemod.com/jssg-types/langs/javascript";
-import { getViteConfig } from "../src/ast-grep/get-vite-config.ts";
+import { getViteConfig } from "../src/ast-grep/get-vite-config";
 
 function parseProgram(src: string) {
 	const root = parse<JS>("javascript", src);
@@ -18,7 +18,10 @@ function assertConfigTexts(result: Array<SgNode<JS>> | null, expected: string[])
 	);
 
 	for (let i = 0; i < expected.length; i++) {
-		assert(texts[i] === expected[i], `Expected argument ${i} to be ${expected[i]}, got ${texts[i]}`);
+		assert(
+			texts[i] === expected[i],
+			`Expected argument ${i} to be ${expected[i]}, got ${texts[i]}`,
+		);
 	}
 }
 
@@ -30,7 +33,9 @@ function testReturnsNullWhenNoViteImport() {
 
 function testReturnsNullWhenDefineConfigImportedFromOtherModule() {
 	const program = parseProgram(
-		["import { defineConfig } from 'other-lib';", "export default defineConfig({ a: 1 });"].join("\n"),
+		["import { defineConfig } from 'other-lib';", "export default defineConfig({ a: 1 });"].join(
+			"\n",
+		),
 	);
 
 	const res = getViteConfig(program);
@@ -39,9 +44,10 @@ function testReturnsNullWhenDefineConfigImportedFromOtherModule() {
 
 function testFindsDefineConfigArgumentFromVite() {
 	const program = parseProgram(
-		["import { defineConfig } from 'vite';", "export default defineConfig({ server: { port: 5173 } });"].join(
-			"\n",
-		),
+		[
+			"import { defineConfig } from 'vite';",
+			"export default defineConfig({ server: { port: 5173 } });",
+		].join("\n"),
 	);
 
 	const res = getViteConfig(program);
@@ -50,7 +56,9 @@ function testFindsDefineConfigArgumentFromVite() {
 
 function testFindsDefineConfigArgumentFromAliasedViteImport() {
 	const program = parseProgram(
-		["import { defineConfig as cfg } from 'vite';", "export default cfg({ plugins: [] });"].join("\n"),
+		["import { defineConfig as cfg } from 'vite';", "export default cfg({ plugins: [] });"].join(
+			"\n",
+		),
 	);
 
 	const res = getViteConfig(program);
@@ -144,7 +152,7 @@ function run() {
 	testFindsDynamicImportAliasedDefineConfig();
 	testIgnoresDynamicImportFromOtherModule();
 
-	console.log("utils/tests/test.ts: all assertions passed");
+	console.log("utils/tests/get-vite-config.test.ts: all assertions passed");
 }
 
 try {

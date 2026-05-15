@@ -1,7 +1,7 @@
 /**¨
  * @fileoverview not tested
  */
-import type { SgNode } from 'codemod:ast-grep';
+import type { SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
 
 /**

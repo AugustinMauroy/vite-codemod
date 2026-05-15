@@ -1,16 +1,11 @@
-import type {
-  HMRBroadcaster,
-  HMRBroadcasterClient,
-  HMRChannel,
-  ServerHMRChannel,
-} from 'vite'
+import type { HMRBroadcaster, HMRBroadcasterClient, HMRChannel, ServerHMRChannel } from "vite";
 
-type Channels = HMRChannel[]
+type Channels = HMRChannel[];
 
 interface RuntimeApi {
-  broadcaster: HMRBroadcaster
-  client: HMRBroadcasterClient
-  serverChannel: ServerHMRChannel
+	broadcaster: HMRBroadcaster;
+	client: HMRBroadcasterClient;
+	serverChannel: ServerHMRChannel;
 }
 
-export type HotTypes = Channels | RuntimeApi
+export type HotTypes = Channels | RuntimeApi;

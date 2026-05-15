@@ -1,14 +1,14 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  css: {
-    preprocessorOptions: {
-      sass: {
-        api: 'legacy',
-      },
-      scss: {
-        api: 'legacy',
-      },
-    },
-  },
-})
+	css: {
+		preprocessorOptions: {
+			sass: {
+				api: "legacy",
+			},
+			scss: {
+				api: "legacy",
+			},
+		},
+	},
+});

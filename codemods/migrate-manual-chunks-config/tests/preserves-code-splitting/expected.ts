@@ -1,15 +1,15 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  build: {
-    rolldownOptions: {
-      output: {
-        codeSplitting: {
-          groups: {
-            vendor: ['react'],
-          },
-        },
-      },
-    },
-  },
-})
+	build: {
+		rolldownOptions: {
+			output: {
+				codeSplitting: {
+					groups: {
+						vendor: ["react"],
+					},
+				},
+			},
+		},
+	},
+});

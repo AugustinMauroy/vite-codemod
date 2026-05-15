@@ -1,5 +1,5 @@
-import type { HotUpdate } from 'vite'
+import type { HotUpdate } from "vite";
 
 export interface DevMessage {
-  update: HotUpdate
+	update: HotUpdate;
 }

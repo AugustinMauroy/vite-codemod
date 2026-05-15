@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  build: {
-    cssMinify: 'esbuild',
-    other: true,
-  },
-})
+	build: {
+		cssMinify: "esbuild",
+		other: true,
+	},
+});

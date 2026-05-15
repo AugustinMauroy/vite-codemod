@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  esbuild: {
-    banner: '/* top */',
-    footer: '/* bottom */',
-    supported: {
-      bigint: true,
-    },
-  },
-})
+	esbuild: {
+		banner: "/* top */",
+		footer: "/* bottom */",
+		supported: {
+			bigint: true,
+		},
+	},
+});

@@ -1,3 +1,3 @@
-import value from './legacy-cjs.cjs'
+import value from "./legacy-cjs.cjs";
 
-export const exportedValue = value
+export const exportedValue = value;

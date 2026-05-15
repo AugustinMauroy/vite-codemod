@@ -1,14 +1,14 @@
-import fs from 'node:fs'
+import fs from "node:fs";
 
 export default {
-  name: 'txt-loader',
-  load(id: string) {
-    if (id.endsWith('.txt')) {
-      const content = fs.readFileSync(id, 'utf-8')
+	name: "txt-loader",
+	load(id: string) {
+		if (id.endsWith(".txt")) {
+			const content = fs.readFileSync(id, "utf-8");
 
-      return {
-        code: `export default ${JSON.stringify(content)}`,
-      }
-    }
-  },
-}
+			return {
+				code: `export default ${JSON.stringify(content)}`,
+			};
+		}
+	},
+};
