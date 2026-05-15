@@ -12,16 +12,8 @@ const IMPORT_META_DEFINE = `'import.meta.url': '__vite_import_meta_url__'`;
 const INTRO_SNIPPET =
 	"intro: 'var __vite_import_meta_url__ = document.currentScript && document.currentScript.src'";
 
-type ObjectNodeInfo = {
-	valueNode: SgNode<JS>;
-	openBrace: number;
-	closeBrace: number;
-};
-
-type TextInsertion = {
-	index: number;
-	text: string;
-};
+import type { TextInsertion } from "@vitejs/codemod-utils/ast-grep/object-helpers";
+import { findMatchingBraceIndex, findObjectProperty, normalizeObjectIndent, applyInsertions } from "@vitejs/codemod-utils/ast-grep/object-helpers";
 
 function escapeRegExp(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -108,40 +100,7 @@ function hasLibraryFormats(node: SgNode<JS>): boolean {
 	});
 }
 
-function findMatchingBraceIndex(node: SgNode<JS>): number {
-	return node.range().end.index - 1;
-}
-
-function findObjectProperty(
-	node: SgNode<JS>,
-	propertyName: string,
-): ObjectNodeInfo | null {
-	const objectPair = node
-		.findAll({
-			rule: { kind: "pair" },
-		})
-		.find((candidate) => {
-			const keyNode = candidate.field("key");
-			const valueNode = candidate.field("value");
-
-			return (
-				keyNode?.kind() === "property_identifier" &&
-				keyNode.text() === propertyName &&
-				valueNode?.kind() === "object"
-			);
-		});
-
-	if (!objectPair) return null;
-
-	const valueNode = objectPair.field("value");
-	if (!valueNode) return null;
-
-	return {
-		valueNode,
-		openBrace: valueNode.range().start.index,
-		closeBrace: findMatchingBraceIndex(valueNode),
-	};
-}
+// object helpers are imported from utils/object-helpers
 
 function buildObjectInsertion(
 	source: string,
@@ -202,13 +161,7 @@ function buildObjectInsertion(
 	};
 }
 
-function applyInsertions(source: string, insertions: TextInsertion[]): string {
-	let nextSource = source;
-	for (const insertion of insertions.sort((left, right) => right.index - left.index)) {
-		nextSource = nextSource.slice(0, insertion.index) + insertion.text + nextSource.slice(insertion.index);
-	}
-	return nextSource;
-}
+// applyInsertions imported from utils
 
 function buildRolldownIntroInsertion(
 	source: string,
@@ -260,32 +213,7 @@ function buildDefinePolyfillInsertion(
 	return buildObjectInsertion(source, configNode, content, indent, lineBreak, configNode.range().start.index);
 }
 
-function normalizeObjectIndent(text: string, indent: string, lineBreak: string) {
-	const lines = text.split(lineBreak);
-	let depth = 0;
-	const out: string[] = [];
-
-	for (const raw of lines) {
-		const line = raw.trim();
-
-		if (line.length === 0) {
-			out.push("");
-			continue;
-		}
-
-		const leadingCloses = (line.match(/^\}+/) || [""])[0].length;
-		const prefixDepth = Math.max(0, depth - leadingCloses);
-
-		const prefix = indent.repeat(prefixDepth);
-		out.push(prefix + line);
-
-		const opens = (line.match(/{/g) || []).length;
-		const closes = (line.match(/}/g) || []).length;
-		depth = Math.max(0, depth + opens - closes);
-	}
-
-	return out.join(lineBreak);
-}
+// normalizeObjectIndent imported from utils
 
 /**
  * @link https://vite.dev/guide/migration#import-meta-url-in-umd-iife
