@@ -5,12 +5,12 @@ export default defineConfig({
 		define: {
 			__DEV__: "true",
 		},
-		exclude: /node_modules/,
 		include: /\.[jt]sx?$/,
+		exclude: /node_modules/,
+		jsxInject: "import React from 'react'",
 		jsx: {
 			importSource: "react",
 			runtime: "automatic",
 		},
-		jsxInject: "import React from 'react'",
 	},
 });
