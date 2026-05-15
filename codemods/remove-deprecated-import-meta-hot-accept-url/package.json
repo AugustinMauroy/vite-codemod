@@ -1,6 +1,6 @@
 {
   "name": "@vitejs/remove-deprecated-import-meta-hot-accept-url",
-  "dependencies": {
-    "@jssg/utils": "^0.0.7"
+  "scripts": {
+      "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
   }
 }
