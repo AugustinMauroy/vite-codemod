@@ -35,38 +35,23 @@ It leaves unsupported transform-related options in place and adds a TODO comment
 
 ## Example
 
-Before:
-
-```ts
+```diff
 import { defineConfig } from "vite";
 
 export default defineConfig({
-	esbuild: {
-		define: {
-			__DEV__: "true",
-		},
-		jsx: "automatic",
-		jsxImportSource: "react",
-	},
-});
-```
-
-After:
-
-```ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
-	oxc: {
-		define: {
-			__DEV__: "true",
-		},
-		jsx: {
-			importSource: "react",
-			runtime: "automatic",
-		},
-	},
-});
+- 	esbuild: {
++ 	oxc: {
+ 			define: {
+ 				__DEV__: "true",
+ 			},
+-			jsx: "automatic", --- IGNORE ---
+-			jsxImportSource: "react", --- IGNORE ---
++			jsx: {
++				importSource: "react",
++				runtime: "automatic",
++			},
+ 	},
+ });
 ```
 
 ## Notes

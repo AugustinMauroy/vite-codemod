@@ -71,16 +71,77 @@ function buildJsxObjectSnippet(parts: string[]): string {
 	`;
 }
 
-function zeroIndent(text: string, lineBreak: string): string {
+function prefixBlock(text: string, prefix: string, lineBreak: string): string {
 	return text
 		.split(lineBreak)
-		.map((line) => line.trimStart())
+		.map((line) => (line.trim().length === 0 ? line : prefix + line))
 		.join(lineBreak)
-		.trim();
+		.trimEnd();
 }
 
-function buildObjectText(parts: string[], lineBreak: string): string {
-	return `{${lineBreak}${parts.join(lineBreak)}${lineBreak}}`;
+function formatObjectSyntax(text: string, indent: string, lineBreak: string): string {
+	const lines = text.split(lineBreak);
+	let depth = 0;
+	const formatted: string[] = [];
+
+	for (const line of lines) {
+		const trimmed = line.trim();
+		if (trimmed.length === 0) {
+			formatted.push("");
+			continue;
+		}
+
+		if (trimmed.startsWith("}")) {
+			depth = Math.max(0, depth - 1);
+		}
+
+		formatted.push(`${indent.repeat(depth)}${trimmed}`);
+
+		const openCount = (trimmed.match(/\{/g) || []).length;
+		const closeCount = (trimmed.match(/\}/g) || []).length;
+		depth = Math.max(0, depth + openCount - closeCount);
+	}
+
+	return formatted.join(lineBreak);
+}
+
+function serializePairNode(
+	pair: SgNode<JS>,
+	level: number,
+	indent: string,
+	lineBreak: string,
+): string | null {
+	const keyNode = pair.field("key");
+	const valueNode = pair.field("value");
+	if (!keyNode || !valueNode) return null;
+
+	if (valueNode.kind() === "object") {
+		const inner = serializeObjectNode(valueNode, level + 1, indent, lineBreak);
+		return `${indent.repeat(level)}${keyNode.text()}: {${lineBreak}${inner}${lineBreak}${indent.repeat(level)}},`;
+	}
+
+	return `${indent.repeat(level)}${keyNode.text()}: ${valueNode.text()},`;
+}
+
+function serializeObjectNode(
+	objectNode: SgNode<JS>,
+	level: number,
+	indent: string,
+	lineBreak: string,
+	excludeStarts: Set<number> = new Set(),
+): string {
+	return objectNode
+		.children()
+		.filter((child) => child.isNamed() && child.kind() === "pair")
+		.map((child) => child as SgNode<JS>)
+		.filter((pair) => !excludeStarts.has(pair.range().start.index))
+		.map((pair) => serializePairNode(pair, level, indent, lineBreak))
+		.filter((line): line is string => line !== null)
+		.join(lineBreak);
+}
+
+function serializeSnippet(snippet: string, indent: string, level: number, lineBreak: string): string {
+	return prefixBlock(formatObjectSyntax(snippet, indent, lineBreak), indent.repeat(level), lineBreak);
 }
 
 
@@ -226,7 +287,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 		let needsManualComment = false;
 
 		const oxcJsxProperty = oxcProperty ? findObjectProperty(oxcProperty.valueNode, "jsx") : null;
-		const oxcJsxPair = oxcJsxProperty ? findPairByKey(oxcProperty.valueNode, "jsx") : null;
+		const oxcJsxPair = oxcJsxProperty ? findPairByKey(oxcJsxProperty.valueNode, "jsx") : null;
 		const textEdits: TextEdit[] = [];
 
 		for (const key of MANUAL_REVIEW_KEYS) {
@@ -335,10 +396,15 @@ const workflow: Codemod<JS> = async (rootNode) => {
 			} else if (jsxMode === "object") {
 				removalPairs.push(jsxPair);
 				const jsxParts: string[] = [];
-				if (jsxRuntime) {
+				if (jsxRuntime === "automatic") {
+					jsxParts.push(...jsxFragments);
 					jsxParts.push(buildPropertySnippet("runtime", JSON.stringify(jsxRuntime)));
+				} else {
+					if (jsxRuntime) {
+						jsxParts.push(buildPropertySnippet("runtime", JSON.stringify(jsxRuntime)));
+					}
+					jsxParts.push(...jsxFragments);
 				}
-				jsxParts.push(...jsxFragments);
 
 				if (oxcJsxProperty) {
 					const existingValue = oxcJsxPair?.field("value");
@@ -382,6 +448,11 @@ const workflow: Codemod<JS> = async (rootNode) => {
 			} else if (!jsxManual && jsxFragments.length > 0) {
 				removalPairs.push(jsxPair);
 				const jsxParts = [...jsxFragments];
+				if (jsxRuntime === "automatic") {
+					jsxParts.push(buildPropertySnippet("runtime", JSON.stringify(jsxRuntime)));
+				} else if (jsxRuntime) {
+					jsxParts.unshift(buildPropertySnippet("runtime", JSON.stringify(jsxRuntime)));
+				}
 				if (oxcJsxProperty) {
 					const existingValue = oxcJsxPair?.field("value");
 					if (existingValue && existingValue.kind() === "object") {
@@ -435,7 +506,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 			}
 		}
 
-        
+
 
 		if (jsxReplacement) {
 			textEdits.push(jsxReplacement);
@@ -512,20 +583,14 @@ const workflow: Codemod<JS> = async (rootNode) => {
 				const keyName = keyNode && keyNode.kind() === "property_identifier" ? keyNode.text() : null;
 
 				if (keyName === "esbuild") {
-					const esbuildPairs = esbuildObject
-						.children()
-						.filter((child) => child.isNamed() && child.kind() === "pair")
-						.map((child) => child as SgNode<JS>)
-						.filter((child) => !removalStarts.has(child.range().start.index));
-
-					if (esbuildPairs.length === 0) {
-						if (commentInsertion) rebuiltParts.push(zeroIndent(commentInsertion.text, lineBreak));
+					const esbuildText = serializeObjectNode(esbuildObject, 2, effectiveIndent, lineBreak, removalStarts);
+					if (esbuildText.length === 0) {
+						if (commentInsertion) rebuiltParts.push(commentInsertion.text.trimEnd());
 						continue;
 					}
 
-					const esbuildText = buildObjectText(esbuildPairs.map((child) => zeroIndent(child.text(), lineBreak)), lineBreak);
-					if (commentInsertion) rebuiltParts.push(zeroIndent(commentInsertion.text, lineBreak));
-					rebuiltParts.push(`esbuild: ${esbuildText},`);
+					if (commentInsertion) rebuiltParts.push(commentInsertion.text.trimEnd());
+					rebuiltParts.push(`${effectiveIndent}esbuild: {${lineBreak}${esbuildText}${lineBreak}${effectiveIndent}},`);
 					continue;
 				}
 
@@ -533,7 +598,8 @@ const workflow: Codemod<JS> = async (rootNode) => {
 					continue;
 				}
 
-				rebuiltParts.push(zeroIndent(pair.text(), lineBreak));
+				const formatted = serializePairNode(pair, 1, effectiveIndent, lineBreak);
+				if (formatted) rebuiltParts.push(formatted);
 			}
 
 			if (rootSnippets.length > 0) {
@@ -542,15 +608,19 @@ const workflow: Codemod<JS> = async (rootNode) => {
 					const existingOxcPairs = oxcProperty.valueNode
 						.children()
 						.filter((child) => child.isNamed() && child.kind() === "pair")
-						.map((child) => child as SgNode<JS>)
-						.map((child) => zeroIndent(child.text(), lineBreak));
-						oxcInnerParts.push(...existingOxcPairs);
+						.map((child) => child as SgNode<JS>);
+					for (const pair of existingOxcPairs) {
+						const formatted = serializePairNode(pair, 2, effectiveIndent, lineBreak);
+						if (formatted) oxcInnerParts.push(formatted);
+					}
 				}
-					oxcInnerParts.push(...rootSnippets.map((snippet) => zeroIndent(snippet, lineBreak)));
-				rebuiltParts.push(`oxc: ${buildObjectText(oxcInnerParts, lineBreak)},`);
+				for (const snippet of rootSnippets) {
+					oxcInnerParts.push(serializeSnippet(snippet, effectiveIndent, 2, lineBreak));
+				}
+				rebuiltParts.push(`${effectiveIndent}oxc: {${lineBreak}${oxcInnerParts.join(lineBreak)}${lineBreak}${effectiveIndent}},`);
 			}
 
-			const rebuilt = buildObjectText(rebuiltParts, lineBreak);
+			const rebuilt = [`{`, ...rebuiltParts, `}`].join(lineBreak);
 			edits.push(configNode.replace(rebuilt));
 		}
 	}
