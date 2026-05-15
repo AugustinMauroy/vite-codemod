@@ -1,4 +1,4 @@
-import dedent  from "dedent";
+import dedent from "dedent";
 import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
 import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
 import { getIdentStyle } from "@vitejs/codemod-utils/ast-grep/indent";
@@ -12,259 +12,214 @@ const IMPORT_META_DEFINE = `'import.meta.url': '__vite_import_meta_url__'`;
 const INTRO_SNIPPET =
 	"intro: 'var __vite_import_meta_url__ = document.currentScript && document.currentScript.src'";
 
-function hasImportMetaPolyfill(configText: string): boolean {
-	return configText.includes(IMPORT_META_DEFINE);
+type ObjectNodeInfo = {
+	valueNode: SgNode<JS>;
+	openBrace: number;
+	closeBrace: number;
+};
+
+type TextInsertion = {
+	index: number;
+	text: string;
+};
+
+function escapeRegExp(value: string): string {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function hasIntroPolyfill(configText: string): boolean {
-	return configText.includes("__vite_import_meta_url__");
+function hasPairWithKey(
+	node: SgNode<JS>,
+	keyName: string,
+	keyKind: "property_identifier" | "string",
+	valuePredicate: (valueNode: SgNode<JS>) => boolean,
+): boolean {
+	return node
+		.findAll({
+			rule: { kind: "pair" },
+		})
+		.some((pairNode) => {
+			const keyNode = pairNode.field("key");
+			const valueNode = pairNode.field("value");
+
+			if (!keyNode || !valueNode) return false;
+			if (keyNode.kind() !== keyKind) return false;
+
+			const keyMatches =
+				keyKind === "string"
+					? keyNode.findAll({
+						rule: {
+							kind: "string_fragment",
+							regex: `^${escapeRegExp(keyName)}$`,
+						},
+					}).length > 0
+					: keyNode.text() === keyName;
+
+			if (!keyMatches) return false;
+
+			return valuePredicate(valueNode);
+		});
 }
 
-function hasUmdOrIifeFormat(configText: string): boolean {
-	return /formats\s*:\s*\[[^\]]*['"](?:umd|iife)['"][^\]]*\]/s.test(configText);
+function hasImportMetaPolyfill(node: SgNode<JS>): boolean {
+	return hasPairWithKey(node, "import.meta.url", "string", (valueNode) => {
+		return (
+			valueNode.kind() === "string" &&
+			valueNode.findAll({
+				rule: {
+					kind: "string_fragment",
+					regex: "^__vite_import_meta_url__$",
+				},
+			}).length > 0
+		);
+	});
 }
 
-function hasLibraryFormats(configText: string): boolean {
-	return /formats\s*:\s*\[[^\]]*\]/s.test(configText);
+function hasIntroPolyfill(node: SgNode<JS>): boolean {
+	return hasPairWithKey(node, "intro", "property_identifier", (valueNode) => {
+		return (
+			valueNode.kind() === "string" &&
+			valueNode.findAll({
+				rule: {
+					kind: "string_fragment",
+					regex: "__vite_import_meta_url__",
+				},
+			}).length > 0
+		);
+	});
 }
 
-/**
- * Safer brace matching.
- * Handles:
- * - strings
- * - template literals
- * - line comments
- * - block comments
- */
-function findMatchingBraceIndex(
-text: string,
-openBraceIndex: number,
-): number {
-	let depth = 0;
+function hasUmdOrIifeFormat(node: SgNode<JS>): boolean {
+	return hasPairWithKey(node, "formats", "property_identifier", (valueNode) => {
+		return (
+			valueNode.kind() === "array" &&
+			valueNode.findAll({
+				rule: {
+					kind: "string_fragment",
+					regex: "^(umd|iife)$",
+				},
+			}).length > 0
+		);
+	});
+}
 
-	let inSingleQuote = false;
-	let inDoubleQuote = false;
-	let inTemplateLiteral = false;
-	let inLineComment = false;
-	let inBlockComment = false;
-	let escaped = false;
+function hasLibraryFormats(node: SgNode<JS>): boolean {
+	return hasPairWithKey(node, "formats", "property_identifier", (valueNode) => {
+		return valueNode.kind() === "array";
+	});
+}
 
-	for (let i = openBraceIndex; i < text.length; i++) {
-		const ch = text[i];
-		const next = text[i + 1];
-
-		if (escaped) {
-			escaped = false;
-			continue;
-		}
-
-		if (inLineComment) {
-			if (ch === "\n") {
-				inLineComment = false;
-			}
-			continue;
-		}
-
-		if (inBlockComment) {
-			if (ch === "*" && next === "/") {
-				inBlockComment = false;
-				i++;
-			}
-			continue;
-		}
-
-		if (ch === "\\") {
-			escaped = true;
-			continue;
-		}
-
-		if (!inDoubleQuote && !inTemplateLiteral && ch === "'") {
-			inSingleQuote = !inSingleQuote;
-			continue;
-		}
-
-		if (!inSingleQuote && !inTemplateLiteral && ch === '"') {
-			inDoubleQuote = !inDoubleQuote;
-			continue;
-		}
-
-		if (!inSingleQuote && !inDoubleQuote && ch === "`") {
-			inTemplateLiteral = !inTemplateLiteral;
-			continue;
-		}
-
-		if (inSingleQuote || inDoubleQuote || inTemplateLiteral) {
-			continue;
-		}
-
-		if (ch === "/" && next === "/") {
-			inLineComment = true;
-			i++;
-			continue;
-		}
-
-		if (ch === "/" && next === "*") {
-			inBlockComment = true;
-			i++;
-			continue;
-		}
-
-		if (ch === "{") {
-			depth++;
-			continue;
-		}
-
-		if (ch === "}") {
-			depth--;
-
-			if (depth === 0) {
-				return i;
-			}
-		}
-	}
-
-	return -1;
+function findMatchingBraceIndex(node: SgNode<JS>): number {
+	return node.range().end.index - 1;
 }
 
 function findObjectProperty(
-source: string,
-propertyName: string,
-): { start: number; openBrace: number; closeBrace: number } | null {
-	const regex = new RegExp(`\\b${propertyName}\\s*:\\s*\\{`);
+	node: SgNode<JS>,
+	propertyName: string,
+): ObjectNodeInfo | null {
+	const objectPair = node
+		.findAll({
+			rule: { kind: "pair" },
+		})
+		.find((candidate) => {
+			const keyNode = candidate.field("key");
+			const valueNode = candidate.field("value");
 
-	const match = regex.exec(source);
+			return (
+				keyNode?.kind() === "property_identifier" &&
+				keyNode.text() === propertyName &&
+				valueNode?.kind() === "object"
+			);
+		});
 
-	// If we can't find the property at all, return null.
-	if (!match) return null;
+	if (!objectPair) return null;
 
-	const openBrace = source.indexOf("{", match.index);
-
-	// If we can't find an opening brace after the property name, this is likely a malformed config.
-	if (openBrace === -1) return null;
-
-	const closeBrace = findMatchingBraceIndex(source, openBrace);
-
-	// If we can't find a matching closing brace, this is likely a malformed config.
-	if (closeBrace === -1) return null;
+	const valueNode = objectPair.field("value");
+	if (!valueNode) return null;
 
 	return {
-		start: match.index,
-		openBrace,
-		closeBrace,
+		valueNode,
+		openBrace: valueNode.range().start.index,
+		closeBrace: findMatchingBraceIndex(valueNode),
 	};
 }
 
-function insertIntoObject(
-source: string,
-objectName: string,
-content: string,
-indent: string,
-lineBreak: string,
-): string {
-	const objectInfo = findObjectProperty(source, objectName);
+function buildObjectInsertion(
+	source: string,
+	objectNode: SgNode<JS>,
+	content: string,
+	indent: string,
+	lineBreak: string,
+	baseOffset: number,
+): TextInsertion | null {
+	const openBrace = objectNode.range().start.index - baseOffset;
+	const closeBrace = findMatchingBraceIndex(objectNode) - baseOffset;
 
-	if (!objectInfo) return source;
+	if (openBrace === -1 || closeBrace === -1) return null;
 
-	// Dedent the content to remove leading whitespace
 	const dedented = dedent(content);
-
 	const lines = dedented.split("\n");
+	const innerRegion = source.slice(openBrace + 1, closeBrace);
+	const lastPropClose = innerRegion.lastIndexOf("},");
 
-	// Determine the base indentation for properties inside the object by
-	// looking for the first non-empty line after the opening brace.
-	const objectLineStart = source.lastIndexOf(lineBreak, objectInfo.openBrace) + 1;
-	const objectLine = source.slice(objectLineStart, objectInfo.openBrace);
-	const objectLineLeading = (objectLine.match(/^\s*/)?.[0]) || "";
-
-	// Find first non-empty line inside the object to detect current property indent
-	let propertyIndent = objectLineLeading + indent; // default fallback
-	const innerRegion = source.slice(objectInfo.openBrace + 1, objectInfo.closeBrace);
-	const innerLines = innerRegion.split(lineBreak);
-	for (const l of innerLines) {
-		if (l.trim().length === 0) continue;
-		const m = l.match(/^\s*/);
-		if (m) {
-			propertyIndent = m[0];
-			break;
-		}
-	}
-
-	// Use the project's detected indent as the base for inserted properties.
-	const innerIndent = indent + indent;
-
-	// Add proper indentation to each line using the computed inner indent
-	// Insert immediately before the object's closing brace '}' so we don't
-	// disturb the existing close-brace line indentation.
-	// Prefer inserting after the last property's trailing comma/newline so
-	// the injected block appears as a sibling property aligned with others.
-	const innerRegion2 = source.slice(objectInfo.openBrace + 1, objectInfo.closeBrace);
-	const lastPropClose = innerRegion2.lastIndexOf("},");
-
-	let insertionIndex = objectInfo.closeBrace;
+	let insertionIndex = closeBrace;
 
 	if (lastPropClose !== -1) {
-		// position after the '},'
-		const tentative = objectInfo.openBrace + 1 + lastPropClose + 2;
-		// find the next newline after that comma
+		const tentative = openBrace + 1 + lastPropClose + 2;
 		const nl = source.indexOf(lineBreak, tentative - 1);
-		if (nl !== -1) {
-			insertionIndex = nl + 1;
-		} else {
-			insertionIndex = tentative;
-		}
+		insertionIndex = nl !== -1 ? nl + 1 : tentative;
 	}
 
-	const needsLeadingLineBreak = !source.slice(0, insertionIndex).endsWith(lineBreak);
-
-	// Compute indentation per-line based on nesting depth so nested blocks
-	// receive the correct extra indent.
+	const innerIndent = indent + indent;
 	let depth = 0;
 	const indentedLines: string[] = [];
 
 	for (const rawLine of lines) {
 		const line = rawLine.trimStart();
 
-		// If this line is a closing line, reduce depth first.
 		if (line.startsWith("}")) {
 			const closeCount = (line.match(/}/g) || []).length;
 			depth = Math.max(0, depth - closeCount);
 		}
 
 		const prefix = innerIndent + indent.repeat(depth);
+		indentedLines.push(line.length > 0 ? prefix + line : "");
 
-		const indented = line.length > 0 ? prefix + line : "";
-
-		indentedLines.push(indented);
-
-		// After printing, update depth for any opening braces on this line.
 		const openCount = (line.match(/{/g) || []).length;
 		const closeCount = (line.match(/}/g) || []).length;
-
-		// If the line wasn't a leading-closing line, adjust depth normally.
 		if (!line.startsWith("}")) {
 			depth += openCount - closeCount;
 		} else {
-			// Already subtracted closeCount above; add any opens.
 			depth += openCount;
 		}
 	}
 
+	const needsLeadingLineBreak = !source.slice(0, insertionIndex).endsWith(lineBreak);
 	const injection = (needsLeadingLineBreak ? lineBreak : "") + indentedLines.join(lineBreak) + lineBreak;
 
-	// Normalize the leading whitespace of the tail (the closing-brace line)
-	// to the project's `indent` so the closing brace aligns with sibling props.
-	const tail = source.slice(insertionIndex);
-	const normalizedTail = tail.replace(/^[ \t]*/, indent);
-
-	return source.slice(0, insertionIndex) + injection + normalizedTail;
+	return {
+		index: insertionIndex,
+		text: injection,
+	};
 }
 
-function addRolldownIntro(
-source: string,
-indent: string,
-lineBreak: string,
-): string {
-	if (source.includes("rolldownOptions")) return source;
+function applyInsertions(source: string, insertions: TextInsertion[]): string {
+	let nextSource = source;
+	for (const insertion of insertions.sort((left, right) => right.index - left.index)) {
+		nextSource = nextSource.slice(0, insertion.index) + insertion.text + nextSource.slice(insertion.index);
+	}
+	return nextSource;
+}
+
+function buildRolldownIntroInsertion(
+	source: string,
+	indent: string,
+	lineBreak: string,
+	configNode: SgNode<JS>,
+): TextInsertion | null {
+	if (source.includes("rolldownOptions")) return null;
+
+	const buildObject = findObjectProperty(configNode, "build");
+	if (!buildObject) return null;
 
 	const content = dedent`
 		rolldownOptions: {
@@ -274,51 +229,27 @@ lineBreak: string,
 		},
 	`;
 
-	return insertIntoObject(source, "build", content, indent, lineBreak);
+	return buildObjectInsertion(
+		source,
+		buildObject.valueNode,
+		content,
+		indent,
+		lineBreak,
+		configNode.range().start.index,
+	);
 }
 
-function addDefinePolyfill(
+function buildDefinePolyfillInsertion(
 	source: string,
 	indent: string,
-	lineBreak: string
-): string {
-	// First check if there's already a define block
-	const defineBlock = findObjectProperty(source, "define");
+	lineBreak: string,
+	configNode: SgNode<JS>,
+): TextInsertion | null {
+	const defineBlock = findObjectProperty(configNode, "define");
 
 	if (defineBlock) {
-		return (
-		source.slice(0, defineBlock.closeBrace) +
-		`${lineBreak}${indent}${IMPORT_META_DEFINE},` +
-		source.slice(defineBlock.closeBrace)
-		);
+		return buildObjectInsertion(source, defineBlock.valueNode, `${IMPORT_META_DEFINE},`, indent, lineBreak, configNode.range().start.index);
 	}
-
-	// Look for the root config object
-	let configMatch = /defineConfig\s*\(\s*\{/.exec(source);
-	let rootOpenBrace = -1;
-
-	if (configMatch) {
-		rootOpenBrace = source.indexOf("{", configMatch.index);
-	} else {
-		const firstBrace = source.indexOf("{");
-		if (firstBrace !== -1) {
-		rootOpenBrace = firstBrace;
-		}
-	}
-
-	if (rootOpenBrace === -1) {
-		return source;
-	}
-
-	const closeBrace = findMatchingBraceIndex(source, rootOpenBrace);
-
-	if (closeBrace === -1) {
-		return source;
-	}
-
-	const hasTrailingNewline = source
-		.slice(0, closeBrace)
-		.endsWith(lineBreak);
 
 	const content = dedent`
 		define: {
@@ -326,22 +257,7 @@ function addDefinePolyfill(
 		},
 	`;
 
-	const lines = content.split("\n");
-
-	const injection =
-		lines
-		.map((line) => {
-			const indented = line.length > 0 ? indent + line : "";
-			return indented;
-		})
-		.join(lineBreak) + lineBreak;
-
-	return (
-		source.slice(0, closeBrace) +
-		(hasTrailingNewline ? "" : lineBreak) +
-		injection +
-		source.slice(closeBrace)
-	)
+	return buildObjectInsertion(source, configNode, content, indent, lineBreak, configNode.range().start.index);
 }
 
 function normalizeObjectIndent(text: string, indent: string, lineBreak: string) {
@@ -349,7 +265,7 @@ function normalizeObjectIndent(text: string, indent: string, lineBreak: string) 
 	let depth = 0;
 	const out: string[] = [];
 
-	for (let raw of lines) {
+	for (const raw of lines) {
 		const line = raw.trim();
 
 		if (line.length === 0) {
@@ -357,15 +273,12 @@ function normalizeObjectIndent(text: string, indent: string, lineBreak: string) 
 			continue;
 		}
 
-		// If the line has leading closing braces, the prefix depth should
-		// be reduced accordingly so the closing brace lines align.
 		const leadingCloses = (line.match(/^\}+/) || [""])[0].length;
 		const prefixDepth = Math.max(0, depth - leadingCloses);
 
 		const prefix = indent.repeat(prefixDepth);
 		out.push(prefix + line);
 
-		// Count opens and closes to update depth for next lines
 		const opens = (line.match(/{/g) || []).length;
 		const closes = (line.match(/}/g) || []).length;
 		depth = Math.max(0, depth + opens - closes);
@@ -381,12 +294,10 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	const root = rootNode.root() as SgNode<JS, "program">;
 
 	const edits: Edit[] = [];
-
 	let shouldWarnNonUmd = false;
 
 	const lineBreak = getLineBreak(root);
 	const indent = getIdentStyle(root) || "  ";
-
 	const viteConfigs = getViteConfig(root);
 
 	if (!viteConfigs?.length) return null;
@@ -394,53 +305,55 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	for (const configNode of viteConfigs) {
 		const originalText = configNode.text();
 
-		if (!hasUmdOrIifeFormat(originalText)) {
-			if (hasLibraryFormats(originalText)) shouldWarnNonUmd = true;
-
+		if (!hasUmdOrIifeFormat(configNode)) {
+			if (hasLibraryFormats(configNode)) shouldWarnNonUmd = true;
 			continue;
 		}
 
-		if (
-			hasImportMetaPolyfill(originalText) &&
-			hasIntroPolyfill(originalText)
-		) {
+		if (hasImportMetaPolyfill(configNode) && hasIntroPolyfill(configNode)) {
 			continue;
+		}
+
+		const insertions: TextInsertion[] = [];
+
+		if (!hasIntroPolyfill(configNode)) {
+			const introInsertion = buildRolldownIntroInsertion(originalText, indent, lineBreak, configNode);
+			if (introInsertion) {
+				insertions.push(introInsertion);
+			}
+		}
+
+		if (!hasImportMetaPolyfill(configNode)) {
+			const defineInsertion = buildDefinePolyfillInsertion(originalText, indent, lineBreak, configNode);
+			if (defineInsertion) {
+				insertions.push(defineInsertion);
+			}
 		}
 
 		let updatedText = originalText;
-
-		if (!hasIntroPolyfill(updatedText)) {
-			updatedText = addRolldownIntro(updatedText, indent, lineBreak);
-		}
-
-		if (!hasImportMetaPolyfill(updatedText)) {
-			updatedText = addDefinePolyfill(updatedText, indent, lineBreak);
+		if (insertions.length > 0) {
+			updatedText = applyInsertions(originalText, insertions);
 		}
 
 		if (updatedText !== originalText) {
-			// Detect the indentation style used inside this config (tabs or spaces)
-			// so we preserve the original style when normalizing.
 			const firstBrace = updatedText.indexOf("{");
 			let detectedIndent = indent;
+
 			if (firstBrace !== -1) {
 				const inner = updatedText.slice(firstBrace + 1);
 				const innerLines = inner.split(lineBreak);
-				for (const l of innerLines) {
-					if (l.trim().length === 0) continue;
-					const m = l.match(/^\s+/);
-					if (m) {
-						detectedIndent = m[0];
+				for (const line of innerLines) {
+					if (line.trim().length === 0) continue;
+					const match = line.match(/^\s+/);
+					if (match) {
+						detectedIndent = match[0];
 					}
 					break;
 				}
 			}
 
-			// Normalize the object indentation using the detected style.
 			updatedText = normalizeObjectIndent(updatedText, detectedIndent, lineBreak);
-
-			// Ensure the updated text starts with a brace (no leading spaces)
 			updatedText = updatedText.replace(/^\s*\{/, "{");
-
 			edits.push(configNode.replace(updatedText));
 		}
 	}
