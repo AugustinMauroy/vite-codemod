@@ -1,6 +1,6 @@
-import { removeImport } from "@jssg/utils/javascript/imports";
 import type { Codemod, Edit } from "codemod:ast-grep";
 import type TS from "codemod:ast-grep/langs/typescript";
+import { removeImport } from "@jssg/utils/javascript/imports";
 
 const DEPRECATED = new Set([
 	"HMRBroadcaster",

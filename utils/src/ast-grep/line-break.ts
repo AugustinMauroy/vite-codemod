@@ -11,8 +11,8 @@ import type JS from "codemod:ast-grep/langs/javascript";
  * @param node The root node of the program to analyze for line breaks.
  * @returns The most common line break sequence found in the program ("\r\n", "\n", or "\r"). Defaults to "\n" if no line breaks are found.
  */
-export function getLineBreak(node: SgNode<JS, "program">): string {
-	const text = node.text();
+export function getLineBreak(node: SgNode<JS>): string {
+	const text = node.getRoot().root().text();
 	const crlfCount = (text.match(/\r\n/g) || []).length;
 	const lfCount = (text.match(/(?<!\r)\n/g) || []).length;
 	const crCount = (text.match(/\r(?!\n)/g) || []).length;

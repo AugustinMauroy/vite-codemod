@@ -10,8 +10,8 @@ import type JS from "codemod:ast-grep/langs/javascript";
  * @param node - The root node of the JavaScript program to analyze.
  * @returns A string representing the indentation style (e.g., '\t' for tabs, '  ' for two spaces, etc.). Defaults to two spaces if no indentation is detected.
  */
-export function getIdentStyle(node: SgNode<JS, "program">): string {
-	const text = node.text();
+export function getIdentStyle(node: SgNode<JS>): string {
+	const text = node.getRoot().root().text();
 	const crlfCount = (text.match(/\r\n/g) || []).length;
 	const lfCount = (text.match(/(?<!\r)\n/g) || []).length;
 	const crCount = (text.match(/\r(?!\n)/g) || []).length;
