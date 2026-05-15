@@ -15,7 +15,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	const src = root.text();
 
 	const lineBreak = getLineBreak(root);
-	const indent = getIdentStyle(root);
+	const indent = getIdentStyle(root) || "\t";
 
 	const pairs = root.findAll({ rule: { kind: "pair" } });
 
@@ -47,12 +47,12 @@ const workflow: Codemod<JS> = async (rootNode) => {
 		if (!valueNode) continue;
 
 		const pairStart = codePair.range().start.index;
-		const pairEnd = codePair.range().end.index;
 
 		// AST-driven detection: prefer inspecting node kinds rather than raw text.
 		const valueKind = valueNode.kind();
 
 		let isJs = false;
+		let shouldWarn = false;
 
 		if (valueKind === "string") {
 			const frags = valueNode.findAll({ rule: { kind: "string_fragment" } });
@@ -64,26 +64,50 @@ const workflow: Codemod<JS> = async (rootNode) => {
 			const callee = valueNode.field("function");
 			const calleeText = callee ? callee.text() : valueNode.text();
 			if (calleeText.includes("JSON.stringify")) {
-				return root.commitEdits([root.replace(`${WARNING}${lineBreak}${src}`)]);
+				shouldWarn = true;
+			} else {
+				shouldWarn = true;
 			}
-			return root.commitEdits([root.replace(`${WARNING}${lineBreak}${src}`)]);
 		} else {
+			shouldWarn = true;
+		}
+
+		if (shouldWarn) {
+			// signal a warning and stop scanning further pairs
 			return root.commitEdits([root.replace(`${WARNING}${lineBreak}${src}`)]);
 		}
 
 		if (isJs) {
-			// Compute insertion point using AST: after the `code` pair's line break
-			const codeLineEnd = src.indexOf(lineBreak, pairEnd);
-			const insertPos = codeLineEnd !== -1 ? codeLineEnd + lineBreak.length : pairEnd;
+			const openBrace = obj.range().start.index;
+			const closeBrace = obj.range().end.index - 1;
+			const innerRegion = src.slice(openBrace + 1, closeBrace);
+			const lastPropClose = innerRegion.lastIndexOf(",");
 
-			// Determine exact property indentation from the `code` line
+			let insertionIndex = closeBrace;
+			if (lastPropClose !== -1) {
+				const tentative = openBrace + 1 + lastPropClose + 1;
+				const nl = src.indexOf(lineBreak, tentative - 1);
+				insertionIndex = nl !== -1 ? nl + lineBreak.length : tentative;
+			}
+
+			// Determine whether we need a leading comma before the insertion.
+			const beforeSlice = src.slice(openBrace + 1, insertionIndex).replace(/\s+$/g, "");
+			const needsComma = beforeSlice.length > 0 && !beforeSlice.endsWith(",");
+
+			// Indentation: reuse the `code` property's leading whitespace.
 			const lineStart = src.lastIndexOf(lineBreak, pairStart) + 1;
 			const leading = src.slice(lineStart, pairStart).match(/^(\s*)/);
 			const leadingWs = leading?.[1] || indent;
 
-			const insertText = `${leadingWs}moduleType: "js",${lineBreak}`;
-			const newSrc = src.slice(0, insertPos) + insertText + src.slice(insertPos);
+			const needsLeadingLineBreak = !src.slice(0, insertionIndex).endsWith(lineBreak);
+			const insertText =
+				(needsComma ? "," : "") +
+				(needsLeadingLineBreak ? lineBreak : "") +
+				leadingWs +
+				`moduleType: "js",` +
+				lineBreak;
 
+			const newSrc = src.slice(0, insertionIndex) + insertText + src.slice(insertionIndex);
 			return root.commitEdits([root.replace(newSrc)]);
 		}
 	}
