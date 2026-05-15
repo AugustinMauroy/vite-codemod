@@ -1,6 +1,10 @@
 import type { Codemod, Edit, SgNode } from "codemod:ast-grep";
 import type TS from "codemod:ast-grep/langs/javascript";
 
+/**
+ * Set of deprecated properties to remove from source files.
+ * These properties are no-ops and can be safely removed, but we replace them with `undefined` instead of deleting the entire member expression to preserve surrounding code validity (e.g. optional chaining, destructuring, etc.).
+ */
 const DEPRECATED_PROPERTY_NAMES = new Set([
 	"root",
 	"_importGlobMap",
@@ -43,6 +47,7 @@ function containsDeprecatedReflectiveTarget(argumentNode: SgNode<TS>): boolean {
 	const memberExpressions = argumentNode.findAll({ rule: { kind: "member_expression" } });
 	return memberExpressions.some((memberNode) => {
 		const text = memberNode.text();
+
 		return (
 			text.startsWith("server.config.legacy") ||
 			text.startsWith("server.") ||
@@ -80,6 +85,7 @@ const workflow: Codemod<TS> = async (rootNode) => {
 		}
 	}
 
+	// If we see reflective access but didn't find any direct accesses to replace, add a warning comment instead of making edits
 	if (!edits.length && !sawReflectiveAccess) return null;
 
 	if (sawReflectiveAccess && edits.length === 0) {
@@ -87,6 +93,7 @@ const workflow: Codemod<TS> = async (rootNode) => {
 	}
 
 	if (!edits.length) return null;
+
 	return root.commitEdits(edits);
 };
 
