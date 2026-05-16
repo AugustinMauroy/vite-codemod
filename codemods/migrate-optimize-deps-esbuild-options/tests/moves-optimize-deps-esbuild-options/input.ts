@@ -1,17 +1,24 @@
 import { defineConfig } from "vite";
 
-export default defineConfig({
-	optimizeDeps: {
-		esbuildOptions: {
-			conditions: ["browser"],
-			define: {
-				__DEV__: "true",
+export default defineConfig(		rolldownOptions: {
+			output: {
+				keepNames: true,
 			},
-			keepNames: true,
-			mainFields: ["browser", "module"],
 			platform: "browser",
-			preserveSymlinks: true,
-			resolveExtensions: [".js", ".ts"],
+			resolve: {
+				conditionNames: ["browser"],
+				extensions: [".js", ".ts"],
+				mainFields: ["browser", "module"],
+				symlinks: false,
+			},
+			transform: {
+				define: {
+					__DEV__: "true",
+				},
+			},
 		},
+{
+	optimizeDeps: {
+		
 	},
 });

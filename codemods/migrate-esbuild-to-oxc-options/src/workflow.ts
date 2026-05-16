@@ -23,13 +23,22 @@ const TODO_COMMENT =
 const TOP_LEVEL_MAPPABLE_KEYS = ["define", "include", "exclude", "jsxInject"] as const;
 const MANUAL_REVIEW_KEYS = ["banner", "footer", "supported", "tsconfigRaw"] as const;
 
-function toTextEdit(edit: { start?: number; end?: number; index?: number; text: string }): TextEdit {
+function toTextEdit(edit: {
+	start?: number;
+	end?: number;
+	index?: number;
+	text: string;
+}): TextEdit {
 	const start = edit.start ?? edit.index ?? 0;
 	const end = edit.end ?? start;
 	return { start, end, text: edit.text };
 }
 
-function buildRemovalEdit(sourceText: string, pairNode: SgNode<JS>, baseOffset: number): TextEdit | null {
+function buildRemovalEdit(
+	sourceText: string,
+	pairNode: SgNode<JS>,
+	baseOffset: number,
+): TextEdit | null {
 	const start = pairNode.range().start.index - baseOffset;
 	let end = pairNode.range().end.index - baseOffset;
 
@@ -140,10 +149,18 @@ function serializeObjectNode(
 		.join(lineBreak);
 }
 
-function serializeSnippet(snippet: string, indent: string, level: number, lineBreak: string): string {
-	return prefixBlock(formatObjectSyntax(snippet, indent, lineBreak), indent.repeat(level), lineBreak);
+function serializeSnippet(
+	snippet: string,
+	indent: string,
+	level: number,
+	lineBreak: string,
+): string {
+	return prefixBlock(
+		formatObjectSyntax(snippet, indent, lineBreak),
+		indent.repeat(level),
+		lineBreak,
+	);
 }
-
 
 function collectViteConfigObjects(root: SgNode<JS>): Array<SgNode<JS>> {
 	const configs: Array<SgNode<JS>> = [];
@@ -506,8 +523,6 @@ const workflow: Codemod<JS> = async (rootNode) => {
 			}
 		}
 
-
-
 		if (jsxReplacement) {
 			textEdits.push(jsxReplacement);
 		}
@@ -527,7 +542,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 				if (removal) textEdits.push(removal);
 			} else {
 				const keptTexts = keptPairs.map((p) => p.text());
-				const replacementText = "{" + "\n" + keptTexts.join("\n") + "\n" + "}";
+				const replacementText = `{\n${keptTexts.join("\n")}\n}`;
 				const replacement = buildReplacementEdit(
 					esbuildProperty.valueNode,
 					configOffset,
@@ -546,7 +561,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 					.map((p) => p as SgNode<JS>);
 				const existingTexts = existingPairs.map((p) => p.text());
 				const combined = existingTexts.concat(rootSnippets);
-				const oxcText = "{" + "\n" + combined.join("\n") + "\n" + "}";
+				const oxcText = `{\n${combined.join("\n")}\n}`;
 				const replacement = buildReplacementEdit(
 					oxcProperty.valueNode,
 					configOffset,
@@ -566,7 +581,12 @@ const workflow: Codemod<JS> = async (rootNode) => {
 				if (insertion) textEdits.push(toTextEdit(insertion));
 			}
 		}
-		if (rootSnippets.length === 0 && removalPairs.length === 0 && !jsxReplacement && !commentInsertion) {
+		if (
+			rootSnippets.length === 0 &&
+			removalPairs.length === 0 &&
+			!jsxReplacement &&
+			!commentInsertion
+		) {
 			continue;
 		}
 
@@ -583,14 +603,22 @@ const workflow: Codemod<JS> = async (rootNode) => {
 				const keyName = keyNode && keyNode.kind() === "property_identifier" ? keyNode.text() : null;
 
 				if (keyName === "esbuild") {
-					const esbuildText = serializeObjectNode(esbuildObject, 2, effectiveIndent, lineBreak, removalStarts);
+					const esbuildText = serializeObjectNode(
+						esbuildObject,
+						2,
+						effectiveIndent,
+						lineBreak,
+						removalStarts,
+					);
 					if (esbuildText.length === 0) {
 						if (commentInsertion) rebuiltParts.push(commentInsertion.text.trimEnd());
 						continue;
 					}
 
 					if (commentInsertion) rebuiltParts.push(commentInsertion.text.trimEnd());
-					rebuiltParts.push(`${effectiveIndent}esbuild: {${lineBreak}${esbuildText}${lineBreak}${effectiveIndent}},`);
+					rebuiltParts.push(
+						`${effectiveIndent}esbuild: {${lineBreak}${esbuildText}${lineBreak}${effectiveIndent}},`,
+					);
 					continue;
 				}
 
@@ -617,7 +645,9 @@ const workflow: Codemod<JS> = async (rootNode) => {
 				for (const snippet of rootSnippets) {
 					oxcInnerParts.push(serializeSnippet(snippet, effectiveIndent, 2, lineBreak));
 				}
-				rebuiltParts.push(`${effectiveIndent}oxc: {${lineBreak}${oxcInnerParts.join(lineBreak)}${lineBreak}${effectiveIndent}},`);
+				rebuiltParts.push(
+					`${effectiveIndent}oxc: {${lineBreak}${oxcInnerParts.join(lineBreak)}${lineBreak}${effectiveIndent}},`,
+				);
 			}
 
 			const rebuilt = [`{`, ...rebuiltParts, `}`].join(lineBreak);
