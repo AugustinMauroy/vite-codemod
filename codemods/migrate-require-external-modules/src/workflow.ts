@@ -113,32 +113,32 @@ const workflow: Codemod<JS> = async (rootNode) => {
 		}
 
 		if (didInsertPlugin) {
-		for (const importNode of root.findAll({ rule: { kind: "import_statement" } })) {
-			const sourceFragment = importNode.findAll({ rule: { kind: "string_fragment" } })[0];
-			if (!sourceFragment || sourceFragment.text() !== "vite") continue;
+			for (const importNode of root.findAll({ rule: { kind: "import_statement" } })) {
+				const sourceFragment = importNode.findAll({ rule: { kind: "string_fragment" } })[0];
+				if (!sourceFragment || sourceFragment.text() !== "vite") continue;
 
-			const importText = importNode.text();
-			if (!importText.startsWith("import")) continue;
-			if (!importText.includes("{") || !importText.includes("}")) continue;
-			if (importText.includes("esmExternalRequirePlugin")) break;
+				const importText = importNode.text();
+				if (!importText.startsWith("import")) continue;
+				if (!importText.includes("{") || !importText.includes("}")) continue;
+				if (importText.includes("esmExternalRequirePlugin")) break;
 
-			const match = importText.match(/\{([\s\S]*?)\}/);
-			if (!match) continue;
+				const match = importText.match(/\{([\s\S]*?)\}/);
+				if (!match) continue;
 
-			const specifiers = match[1]
-				.split(",")
-				.map((item) => item.trim())
-				.filter(Boolean);
-			specifiers.push("esmExternalRequirePlugin");
+				const specifiers = match[1]
+					.split(",")
+					.map((item) => item.trim())
+					.filter(Boolean);
+				specifiers.push("esmExternalRequirePlugin");
 
-			const updatedImport = importText.replace(/\{[\s\S]*?\}/, `{ ${specifiers.join(", ")} }`);
-			edits.push({
-				start: importNode.range().start.index,
-				end: importNode.range().end.index,
-				text: updatedImport,
-			});
-			break;
-		}
+				const updatedImport = importText.replace(/\{[\s\S]*?\}/, `{ ${specifiers.join(", ")} }`);
+				edits.push({
+					start: importNode.range().start.index,
+					end: importNode.range().end.index,
+					text: updatedImport,
+				});
+				break;
+			}
 		}
 	}
 
