@@ -29,34 +29,28 @@ The codemod is intended to:
 Example transformation:
 
 ```diff
- export default defineConfig({
-	 esbuild: {
-		 drop: ['console', 'debugger'],
-		 minifyIdentifiers: true,
-		 minifySyntax: true,
-		 minifyWhitespace: true,
-	 },
- })
-
- becomes
-
- export default defineConfig({
-	 build: {
-		 rolldownOptions: {
-			 output: {
-				 minify: {
-					 compress: {
-						 dropConsole: true,
-						 dropDebugger: true,
-					 },
-					 identifiers: true,
-					 syntax: true,
-					 whitespace: true,
-				 },
-			 },
-		 },
-	 },
- })
-```
+export default defineConfig({
+  build: {
+-    esbuild: {
+-      drop: ['console', 'debugger'],
+-      minifyIdentifiers: true,
+-      minifySyntax: true,
+-      minifyWhitespace: true,
+-    },
++    rolldownOptions: {
++      output: {
++        minify: {
++          compress: {
++            dropConsole: true,
++            dropDebugger: true,
++          },
++          identifiers: true,
++          syntax: true,
++          whitespace: true,
++        },
++      },
++    },
+  },
+})
 
 If the config uses unsupported property mangling, the codemod emits a warning and leaves the file unchanged.

@@ -1,42 +1,15 @@
 import type { Codemod, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
-
-type TextEdit = {
-	start: number;
-	end: number;
-	text: string;
-};
+import {
+	applyTextEdits,
+	findPairByKey,
+	getIndentUnit,
+	getLeadingWhitespace,
+	type TextEdit,
+} from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
+import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
 
 const WARNING = "// Warning: Dynamic external module lists cannot be normalized automatically.";
-
-function applyTextEdits(source: string, edits: TextEdit[]): string {
-	let nextSource = source;
-	for (const edit of edits.sort((left, right) => right.start - left.start)) {
-		nextSource = nextSource.slice(0, edit.start) + edit.text + nextSource.slice(edit.end);
-	}
-	return nextSource;
-}
-
-function findPairByKey(objectNode: SgNode<JS>, keyName: string): SgNode<JS> | null {
-	const pairs = objectNode.findAll({ rule: { kind: "pair" } });
-	for (const pair of pairs) {
-		const key = pair.field("key");
-		if (!key) continue;
-		if (key.kind() !== "property_identifier") continue;
-		if (key.text() !== keyName) continue;
-		return pair;
-	}
-	return null;
-}
-
-function getLeadingWhitespace(source: string, index: number): string {
-	const lineStart = Math.max(0, source.lastIndexOf("\n", index - 1) + 1);
-	return source.slice(lineStart, index).match(/^[ \t]*/)?.[0] ?? "";
-}
-
-function getIndentUnit(leading: string): string {
-	return leading.includes("\t") ? "\t" : "  ";
-}
 
 const workflow: Codemod<JS> = async (rootNode) => {
 	const root = rootNode.root() as SgNode<JS, "program">;
@@ -69,15 +42,10 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	}
 
 	if (!hasPluginCall) {
-		for (const configCall of root.findAll({ rule: { kind: "call_expression" } })) {
-			if (configCall.field("function")?.text() !== "defineConfig") continue;
-			const argsNode = configCall.field("arguments");
-			if (!argsNode) continue;
-
-			const configObject = argsNode
-				.children()
-				.find((child) => child.isNamed() && child.kind() === "object") as SgNode<JS> | undefined;
-			if (!configObject) continue;
+		const viteConfigs = getViteConfig(root) ?? [];
+		for (const configNode of viteConfigs) {
+			const configObject = configNode;
+			if (!configObject || configObject.kind() !== "object") continue;
 
 			const pluginsPair = findPairByKey(configObject, "plugins");
 			if (!pluginsPair) continue;

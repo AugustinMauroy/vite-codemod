@@ -31,12 +31,6 @@ Example transformation:
 -    cssMinify: 'esbuild',
    },
  })
-
- becomes
-
- export default defineConfig({
-   build: {},
- })
 ```
 
 If the `cssMinify` value is conditional or computed, the codemod emits a warning and skips the change.

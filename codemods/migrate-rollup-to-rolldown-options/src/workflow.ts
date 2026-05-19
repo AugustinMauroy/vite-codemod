@@ -1,69 +1,43 @@
 import type { Codemod, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
-
-type TextEdit = { start: number; end: number; text: string };
-
-function applyTextEdits(source: string, edits: TextEdit[]): string {
-	let next = source;
-	for (const e of edits.sort((a, b) => b.start - a.start)) {
-		next = next.slice(0, e.start) + e.text + next.slice(e.end);
-	}
-	return next;
-}
-
-function findPairByKey(obj: SgNode<JS>, keyName: string): SgNode<JS> | null {
-	// search for plain pairs
-	const pairs = obj.findAll({ rule: { kind: "pair" } });
-	for (const p of pairs) {
-		const key = p.field("key");
-		if (!key) continue;
-		if (key.text() === keyName) return p;
-	}
-	// also search for method definitions (shorthand methods like `customResolver() {}`)
-	const methods = obj.findAll({ rule: { kind: "method_definition" } });
-	for (const m of methods) {
-		const name = m.field("name");
-		if (!name) continue;
-		if (name.text() === keyName) return m as unknown as SgNode<JS>;
-	}
-	return null;
-}
+import { findPairByKey } from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
+import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
+import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
 
 const WARNING = "// Warning: resolve.alias customResolver must be rewritten as a plugin.";
 
 const workflow: Codemod<JS> = async (rootNode) => {
 	const root = rootNode.root() as SgNode<JS, "program">;
 	const source = root.text();
-	const lineBreak = source.includes("\r\n") ? "\r\n" : "\n";
-	// use conservative string-based transforms for this codemod's cases
+	const lineBreak = getLineBreak(root);
+	const viteConfigs = getViteConfig(root);
+
+	if (!viteConfigs?.length) return null;
+
 	let needsWarning = false;
 
 	// detect resolve.alias customResolver via AST
-	for (const call of root.findAll({ rule: { kind: "call_expression" } })) {
-		if (call.field("function")?.text() !== "defineConfig") continue;
-		const args = call.field("arguments");
-		if (!args) continue;
-		const cfg = args.children().find((c) => c.isNamed() && c.kind() === "object") as
-			| SgNode<JS>
-			| undefined;
-		if (!cfg) continue;
+	for (const configNode of viteConfigs) {
+		for (const resolvePair of configNode.findAll({ rule: { kind: "pair" } })) {
+			const keyNode = resolvePair.field("key");
+			if (!keyNode || keyNode.text() !== "resolve") continue;
 
-		const resolvePair = findPairByKey(cfg, "resolve");
-		if (resolvePair) {
-			const resolveObj = resolvePair.field("value");
-			if (resolveObj && resolveObj.kind() === "object") {
-				const aliasPair = findPairByKey(resolveObj, "alias");
-				if (aliasPair) {
-					const aliasVal = aliasPair.field("value");
-					if (aliasVal && aliasVal.kind() === "array") {
-						for (const item of aliasVal.children()) {
-							if (!item.isNamed() || item.kind() !== "object") continue;
-							const custom = findPairByKey(item as SgNode<JS>, "customResolver");
-							if (custom) {
-								needsWarning = true;
-								break;
-							}
-						}
+			const resolveVal = resolvePair.field("value");
+			if (!resolveVal || resolveVal.kind() !== "object") continue;
+
+			for (const aliasPair of resolveVal.findAll({ rule: { kind: "pair" } })) {
+				const aliasKey = aliasPair.field("key");
+				if (!aliasKey || aliasKey.text() !== "alias") continue;
+
+				const aliasVal = aliasPair.field("value");
+				if (!aliasVal || aliasVal.kind() !== "array") continue;
+
+				for (const item of aliasVal.children()) {
+					if (!item.isNamed() || item.kind() !== "object") continue;
+					const custom = findPairByKey(item as SgNode<JS>, "customResolver");
+					if (custom) {
+						needsWarning = true;
+						break;
 					}
 				}
 			}

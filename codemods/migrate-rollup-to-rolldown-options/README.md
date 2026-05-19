@@ -12,53 +12,17 @@ This codemod takes a conservative approach: it applies safe textual transformati
 
 ## Usage
 
-Run the codemod with `npx codemod` or the included test runner:
+Example transformation:
 
-```bash
-npx codemod jssg run --language typescript ./codemods/migrate-rollup-to-rolldown-options/src/workflow.ts -- <file>
-
-# run snapshot tests for the codemod
-cd codemods/migrate-rollup-to-rolldown-options
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
+```diff
+ export default defineConfig({
+ 	build: {
+-		commonjsOptions: { include: [/src/] },
+-		rollupOptions: { output: { format: "cjs" }, plugins: [] },
++		rolldownOptions: { output: { format: "cjs" }, plugins: [] },
+ 	},
+ });
 ```
-
-## Examples
-
-Input:
-
-```ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
-	build: {
-		commonjsOptions: { include: [/src/] },
-		rollupOptions: { output: { format: "cjs" }, plugins: [] },
-	},
-});
-```
-
-Output:
-
-```ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
-	build: {
-		rolldownOptions: { output: { format: "cjs" }, plugins: [] },
-	},
-});
-```
-
-## Tests
-
-The codemod includes snapshot tests under `tests/`. They cover common scenarios:
-
-- `preserves-rolldown-options`: leaves existing `rolldownOptions` alone.
-- `renames-build-and-worker-rollup-options`: renames keys in both `build` and `worker`.
-- `warns-on-custom-resolver`: prepends a warning when `resolve.alias` uses a `customResolver`.
-- `converts-rollup-options-with-extras`: handles extra fields and removes `commonjsOptions`.
-- `handles-multiple-defineconfigs`: applies transformations across multiple `defineConfig` calls.
-- `skips-when-no-build`: leaves files without a `build` section unchanged.
 
 ## Limitations
 
