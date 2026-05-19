@@ -10,7 +10,7 @@
     "#/*": "./src/*.ts"
   },
   "scripts": {
-    "test": "npx codemod@1.9.3 jssg exec ./tests/get-vite-config.test.ts && npx codemod@1.9.3 jssg exec ./tests/object-helpers.test.ts"
+    "test": "npx codemod@1.9.3 jssg exec ./tests/get-vite-config.test.ts && npx codemod@1.9.3 jssg exec ./tests/object-helpers.test.ts && npx codemod@1.9.3 jssg exec ./tests/rolldown-serializer.test.ts"
   },
   "dependencies": {
     "@jssg/utils": "0.0.7"
