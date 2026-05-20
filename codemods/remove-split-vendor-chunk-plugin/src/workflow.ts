@@ -14,7 +14,7 @@ function detectPluginAlias(source: string): string {
 	const m = source.match(/import\s*\{([^}]*)\}\s*from\s*["']vite["']/);
 	if (!m) return pluginName;
 	const inside = m[1];
-	const parts = inside.split(",").map((p) => p.trim());
+	const parts = inside.split(",").map((p: string) => p.trim());
 	for (const p of parts) {
 		// match `splitVendorChunkPlugin` or `splitVendorChunkPlugin as svc`
 		const mm = p.match(/^splitVendorChunkPlugin(?:\s+as\s+(\w+))?$/);
@@ -119,9 +119,9 @@ const workflow: Codemod<JS> = async (rootNode) => {
 		updated = updated.replace(/import\s*\{([^}]*)\}\s*from\s*(['"])vite\2/, (_m, inside, quote) => {
 			const parts = inside
 				.split(",")
-				.map((p) => p.trim())
+				.map((p: string) => p.trim())
 				.filter(Boolean);
-			const kept = parts.filter((p) => !/^splitVendorChunkPlugin(?:\s+as\s+\w+)?$/.test(p));
+			const kept = parts.filter((p: string) => !/^splitVendorChunkPlugin(?:\s+as\s+\w+)?$/.test(p));
 			if (kept.length === 0) return ""; // remove whole import
 			return `import { ${kept.join(", ")} } from ${quote}vite${quote}`;
 		});

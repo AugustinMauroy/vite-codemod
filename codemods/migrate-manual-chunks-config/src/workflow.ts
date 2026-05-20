@@ -40,7 +40,10 @@ const workflow: Codemod<JS> = async (rootNode) => {
 		const rollupPair = findPairByKey(buildProp.valueNode, "rollupOptions");
 		if (!rollupPair) continue;
 
-		const outputProp = findObjectProperty(rollupPair.field("value"), "output");
+		const rollupVal = rollupPair.field("value");
+		if (!rollupVal) continue;
+
+		const outputProp = findObjectProperty(rollupVal, "output");
 		if (!outputProp) continue;
 
 		// If output contains function-form manualChunks, warn conservatively

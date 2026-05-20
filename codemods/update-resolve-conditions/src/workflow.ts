@@ -12,7 +12,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	const lineBreak = getLineBreak(root);
 
 	const viteConfigs = getViteConfig(root);
-	if (!viteConfigs || !viteConfigs.length) return null;
+	if (!viteConfigs?.length) return null;
 
 	let needsWarning = false;
 
