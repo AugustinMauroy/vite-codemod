@@ -1,5 +1,7 @@
 # normalize-commonjs-interop-legacy-option
 
+See the Vite migration guide for more details: [Consistent CommonJS Interop](https://vite.dev/guide/migration#consistent-commonjs-interop).
+
 Normalize legacy CommonJS interop settings introduced by older Vite `legacy` configs.
 
 ## What this codemod does

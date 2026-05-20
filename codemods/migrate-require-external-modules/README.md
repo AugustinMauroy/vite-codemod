@@ -1,5 +1,7 @@
 # migrate-require-external-modules
 
+See the Vite migration guide for more details: [Require Calls For Externalized Modules](https://vite.dev/guide/migration#require-calls-for-externalized-modules).
+
 Migrate projects to use `esmExternalRequirePlugin` for preserving `require()` imports when building ESM bundles.
 
 ## What this codemod does

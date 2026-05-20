@@ -1,5 +1,7 @@
 # update-plugin-load-transform-moduleType
 
+See the Vite migration guide for more details: [Module Type Support and Auto Detection](https://vite.dev/guide/migration#module-type-support-and-auto-detection).
+
 Add explicit `moduleType` for plugin `load`/`transform` outputs that are JavaScript.
 
 ## What this codemod does

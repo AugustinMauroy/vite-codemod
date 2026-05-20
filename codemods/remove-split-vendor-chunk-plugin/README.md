@@ -1,5 +1,7 @@
 # remove-split-vendor-chunk-plugin
 
+See the Vite migration guide for more details: [Removed deprecated features](https://v7.vite.dev/guide/migration#removed-deprecated-features).
+
 Remove usages of Vite's `splitVendorChunkPlugin` helper from plugin arrays where it is safe to do so.
 
 ## What this codemod does

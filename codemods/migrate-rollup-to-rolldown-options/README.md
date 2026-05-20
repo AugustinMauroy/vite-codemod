@@ -1,3 +1,10 @@
+# Migrate Rollup to Rolldown options
+
+See the Vite migration guide for more details: [Other Related Deprecations](https://vite.dev/guide/migration#other-related-deprecations).
+
+This codemod updates Rollup-related options to Rolldown equivalents.
+
+Migrate projects to use Rolldown-native options by renaming legacy Rollup configuration keys.
  # migrate-rollup-to-rolldown-options
 
 Migrate projects to use Rolldown-native options by renaming legacy Rollup configuration keys.

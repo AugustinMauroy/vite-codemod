@@ -1,5 +1,7 @@
 # Remove deprecated properties
 
+See the Vite migration guide for more details: [Advanced: no-op type properties](https://v7.vite.dev/guide/migration#advanced).
+
 This codemod removes reads of deprecated no-op properties that were deleted in Vite 7.
 
 Behavior

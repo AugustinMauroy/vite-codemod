@@ -1,5 +1,7 @@
 # migrate-manual-chunks-config
 
+See the Vite migration guide for more details: [Removed object form build.rollupOptions.output.manualChunks](https://vite.dev/guide/migration#removed-object-form-buildrollupoptionsoutputmanualchunks-and-deprecate-function-form-one).
+
 Migrate the removed object-form of `build.rollupOptions.output.manualChunks` into the new `rolldownOptions.output.codeSplitting.groups` shape.
 
 ## What this codemod does

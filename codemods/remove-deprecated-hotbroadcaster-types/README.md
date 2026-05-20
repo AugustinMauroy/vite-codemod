@@ -1,5 +1,7 @@
 # Remove deprecated HotBroadcaster types
 
+See the Vite migration guide for more details: [Advanced: deprecated HotBroadcaster types](https://v7.vite.dev/guide/migration#advanced).
+
 This codemod replaces deprecated HotBroadcaster-related TypeScript type identifiers with a safer fallback and cleans up type-only imports from `vite`.
 
 ## What it does

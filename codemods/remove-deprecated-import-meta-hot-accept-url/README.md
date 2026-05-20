@@ -1,5 +1,7 @@
 # Remove deprecated import.meta.hot accept url
 
+See the Vite migration guide for more details: [Removed Deprecated Features](https://vite.dev/guide/migration#removed-deprecated-features).
+
 This codemod updates deprecated runtime usages of `import.meta.hot.accept(url)` to safer module-id forms when possible.
 
 Behavior

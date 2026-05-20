@@ -1,5 +1,7 @@
 # remove-sass-legacy-api-option
 
+See the Vite migration guide for more details: [Removed Sass legacy API support](https://v7.vite.dev/guide/migration#removed-sass-legacy-api-support).
+
 Remove legacy Sass API usage from `css.preprocessorOptions` in Vite configs.
 
 ## What this codemod does

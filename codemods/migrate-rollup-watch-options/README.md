@@ -1,5 +1,7 @@
 # migrate-rollup-watch-options
 
+See the Vite migration guide for more details: [Removed build.rollupOptions.watch.chokidar option](https://vite.dev/guide/migration#removed-buildrollupoptionswatchchokidar-option).
+
 Migrate watch settings inside Rollup/Vite configs by renaming legacy keys to Rolldown equivalents.
 
 ## What this codemod does

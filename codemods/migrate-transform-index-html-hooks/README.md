@@ -1,5 +1,7 @@
 # migrate-transform-index-html-hooks
 
+See the Vite migration guide for more details: [Removed deprecated features](https://v7.vite.dev/guide/migration#removed-deprecated-features).
+
 Migrate plugin `transformIndexHtml` hook metadata from legacy `html-hooks` plugins to the newer `handler`/`order` shape.
 
 ## What this codemod does
