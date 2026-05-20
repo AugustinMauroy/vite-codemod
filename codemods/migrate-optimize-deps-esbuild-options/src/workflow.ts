@@ -1,5 +1,6 @@
 import type { Codemod, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
+import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
 import { getIdentStyle } from "@vitejs/codemod-utils/ast-grep/indent";
 import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
 import {
@@ -9,7 +10,6 @@ import {
 	removePairFromSource,
 } from "@vitejs/codemod-utils/ast-grep/object-helpers";
 import { buildRolldownSnippetFromSource } from "@vitejs/codemod-utils/ast-grep/rolldown-serializer";
-import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
 
 const WARNING = "// Warning: esbuild plugin support under optimizeDeps requires manual review.";
 

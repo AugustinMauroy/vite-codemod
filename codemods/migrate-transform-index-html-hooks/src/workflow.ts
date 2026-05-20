@@ -1,8 +1,8 @@
 import type { Codemod, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
+import { applyTextEdits, findPairByKey } from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
 import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
 import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
-import { applyTextEdits, findPairByKey } from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
 
 const WARNING = "// Warning: Unable to safely migrate computed transformIndexHtml hook metadata.";
 
@@ -20,7 +20,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	const source = root.text();
 	const lineBreak = getLineBreak(root);
 	const viteConfigs = getViteConfig(root);
-	if (!viteConfigs || !viteConfigs.length) return null;
+	if (!viteConfigs?.length) return null;
 
 	const edits: Array<{ start: number; end: number; text: string }> = [];
 	let needsWarning = false;

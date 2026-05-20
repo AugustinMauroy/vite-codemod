@@ -1,8 +1,8 @@
 import type { Codemod, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
+import { applyTextEdits, findPairByKey } from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
 import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
 import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
-import { applyTextEdits, findPairByKey } from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
 import { findObjectProperty } from "@vitejs/codemod-utils/ast-grep/object-helpers";
 
 const WARNING =
@@ -28,7 +28,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	const source = root.text();
 	const lineBreak = getLineBreak(root);
 	const viteConfigs = getViteConfig(root);
-	if (!viteConfigs || !viteConfigs.length) return null;
+	if (!viteConfigs?.length) return null;
 
 	const edits: Array<{ start: number; end: number; text: string }> = [];
 	let needsWarning = false;
@@ -46,7 +46,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 		// and annotate a warning if the plugin appears in the expression.
 		if (pluginsVal.kind() !== "array") {
 			const pluginsText = pluginsVal.text();
-			if (pluginsText.includes(pluginAlias + "(")) {
+			if (pluginsText.includes(`${pluginAlias}(`)) {
 				needsWarning = true;
 				break;
 			}
@@ -71,7 +71,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 
 		const pluginsText = pluginsVal.text();
 		// If the plugin is used inside conditional expressions within the array, avoid unsafe removal and emit a warning.
-		if (pluginsText.includes(pluginAlias + "(") && pluginsText.includes("?")) {
+		if (pluginsText.includes(`${pluginAlias}(`) && pluginsText.includes("?")) {
 			needsWarning = true;
 			break;
 		}
@@ -102,7 +102,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 
 			// if plugin appears inside element text (e.g. conditional), warn and skip
 			const txt = child.text();
-			if (txt.includes(pluginAlias + "(")) {
+			if (txt.includes(`${pluginAlias}(`)) {
 				needsWarning = true;
 				break;
 			}
@@ -116,7 +116,7 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	// Remove import specifier if plugin was removed
 	if (removedPlugin) {
 		// remove `splitVendorChunkPlugin` from named import from 'vite', preserving original quote style
-		updated = updated.replace(/import\s*\{([^}]*)\}\s*from\s*(['"])vite\2/, (m, inside, quote) => {
+		updated = updated.replace(/import\s*\{([^}]*)\}\s*from\s*(['"])vite\2/, (_m, inside, quote) => {
 			const parts = inside
 				.split(",")
 				.map((p) => p.trim())
