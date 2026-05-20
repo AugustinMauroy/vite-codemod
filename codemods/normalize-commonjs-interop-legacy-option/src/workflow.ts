@@ -58,7 +58,11 @@ const workflow: Codemod<JS> = async (rootNode) => {
 				if (between.trim().length === 0) {
 					const legacyPair = findPairByKey(configNode, "legacy");
 					if (legacyPair) {
-						const removed = removePairFromSource(originalText, legacyPair, configNode.range().start.index);
+						const removed = removePairFromSource(
+							originalText,
+							legacyPair,
+							configNode.range().start.index,
+						);
 						if (removed !== null) {
 							let finalText = normalizeObjectIndent(removed, indent, lineBreak);
 							const inner2 = finalText.replace(/^\s*\{/, "{").replace(/\}\s*$/, "}");
@@ -97,7 +101,9 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	if (!edits.length && !annotateWarning) return null;
 
 	if (annotateWarning && edits.length === 0) {
-		const warningComment = ["// Expected warning:", `// ${WARNING.replace("// ", "")}`, ""].join("\n");
+		const warningComment = ["// Expected warning:", `// ${WARNING.replace("// ", "")}`, ""].join(
+			"\n",
+		);
 		edits.unshift(root.replace(warningComment + root.text()));
 	}
 

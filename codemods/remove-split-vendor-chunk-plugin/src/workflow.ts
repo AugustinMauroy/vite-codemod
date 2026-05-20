@@ -5,7 +5,8 @@ import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
 import { applyTextEdits, findPairByKey } from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
 import { findObjectProperty } from "@vitejs/codemod-utils/ast-grep/object-helpers";
 
-const WARNING = "// Warning: Unable to safely remove splitVendorChunkPlugin from conditional plugin logic.";
+const WARNING =
+	"// Warning: Unable to safely remove splitVendorChunkPlugin from conditional plugin logic.";
 
 const pluginName = "splitVendorChunkPlugin";
 
@@ -116,7 +117,10 @@ const workflow: Codemod<JS> = async (rootNode) => {
 	if (removedPlugin) {
 		// remove `splitVendorChunkPlugin` from named import from 'vite', preserving original quote style
 		updated = updated.replace(/import\s*\{([^}]*)\}\s*from\s*(['"])vite\2/, (m, inside, quote) => {
-			const parts = inside.split(",").map((p) => p.trim()).filter(Boolean);
+			const parts = inside
+				.split(",")
+				.map((p) => p.trim())
+				.filter(Boolean);
 			const kept = parts.filter((p) => !/^splitVendorChunkPlugin(?:\s+as\s+\w+)?$/.test(p));
 			if (kept.length === 0) return ""; // remove whole import
 			return `import { ${kept.join(", ")} } from ${quote}vite${quote}`;
