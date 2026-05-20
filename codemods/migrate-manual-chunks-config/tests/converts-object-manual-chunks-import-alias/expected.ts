@@ -1,6 +1,6 @@
-import { defineConfig } from "vite";
+import { defineConfig as dc } from "vite";
 
-export default defineConfig({
+export default dc({
 	build: {
 		rolldownOptions: {
 		output: {

@@ -3,13 +3,13 @@ import { defineConfig } from "vite";
 export default defineConfig({
 	build: {
 		rolldownOptions: {
-		output: {
+			output: {
 				codeSplitting: {
-						groups: {
-								charting: ["d3"],
-								vendor: ["react", "react-dom"],
-						}
-				}
-		}
+					groups: {
+						vendor: ["react", "react-dom"],
+					},
+				},
+			},
+		},
 	},
 });
