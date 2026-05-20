@@ -1,3 +1,6 @@
 {
-  "name": "@vitejs/v6-to-v7"
+  "name": "@vitejs/v6-to-v7",
+  "scripts": {
+    "test": "echo \"No tests for v6-to-v7\""
+  }
 }
