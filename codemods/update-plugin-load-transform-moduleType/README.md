@@ -48,7 +48,6 @@ Run tests:
 
 ```bash
 cd codemods/update-plugin-load-transform-moduleType
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```
 
 ## Limitations

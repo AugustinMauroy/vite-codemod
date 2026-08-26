@@ -53,7 +53,6 @@ Run tests for this codemod:
 
 ```bash
 cd codemods/remove-split-vendor-chunk-plugin
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```
 
 ## Migration guidance

@@ -23,7 +23,6 @@ Or run the snapshot tests locally from the codemod folder:
 
 ```bash
 cd codemods/migrate-require-external-modules
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```
 
 ## Examples

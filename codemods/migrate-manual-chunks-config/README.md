@@ -64,5 +64,4 @@ export default defineConfig({
 
 ```bash
 cd codemods/migrate-manual-chunks-config
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```

@@ -2,7 +2,7 @@
   "name": "vitejs-migrate-optimize-deps-esbuild-options",
   "description": "Migrate optimizeDeps esbuild options",
   "scripts": {
-    "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
+    "test": "npx codemod jssg test -l typescript ./src/workflow.ts"
   },
   "dependencies": {
     "@jssg/utils": "^0.0.8",

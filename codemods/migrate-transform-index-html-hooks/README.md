@@ -52,7 +52,6 @@ Run the codemod tests or use the codemod runner locally:
 
 ```bash
 cd codemods/migrate-transform-index-html-hooks
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```
 
 ## Migration guidance

@@ -45,7 +45,6 @@ Run the codemod tests or use the codemod runner locally:
 
 ```bash
 cd codemods/normalize-commonjs-interop-legacy-option
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```
 
 To run the codemod against files, integrate with your repo tooling or run the codemod harness used by this project.

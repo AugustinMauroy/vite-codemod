@@ -47,7 +47,6 @@ Run tests for this codemod with:
 
 ```bash
 cd codemods/remove-sass-legacy-api-option
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```
 
 ## Migration guidance

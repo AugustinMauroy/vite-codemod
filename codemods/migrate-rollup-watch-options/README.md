@@ -43,7 +43,6 @@ This codemod includes unit-style jssg tests under `tests/`. Run them with:
 
 ```bash
 cd codemods/migrate-rollup-watch-options
-npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts
 ```
 
 ## Migration guidance
