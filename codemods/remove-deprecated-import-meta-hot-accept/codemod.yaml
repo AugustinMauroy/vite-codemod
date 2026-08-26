@@ -1,5 +1,5 @@
 schema_version: "1.0"
-name: "vitejs-remove-deprecated-import-meta-hot-accept-url"
+name: "vitejs-remove-deprecated-import-meta-hot-accept"
 version: 1.0.0
 description: "Remove deprecated import.meta.hot accept URL"
 author: "Augustin Mauroy"

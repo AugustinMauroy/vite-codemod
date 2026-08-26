@@ -1,5 +1,5 @@
 {
-  "name": "vitejs-remove-deprecated-import-meta-hot-accept-url",
+  "name": "vitejs-remove-deprecated-import-meta-hot-accept",
   "scripts": {
     "test": "npx codemod jssg test -l typescript ./src/workflow.ts"
   }

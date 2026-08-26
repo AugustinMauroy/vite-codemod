@@ -13,7 +13,7 @@
   - `vitejs-migrate-esbuild-minify-options` - [JavaScript Minification by Oxc](https://vite.dev/guide/migration#javascript-minification-by-oxc)
   - `vitejs-migrate-optimize-deps-esbuild-options` - [Dependency Optimizer Now Uses Rolldown](https://vite.dev/guide/migration#dependency-optimizer-now-uses-rolldown)
   - `vitejs-migrate-rollup-to-rolldown-options` - [Other Related Deprecations](https://vite.dev/guide/migration#other-related-deprecations)
-  - `vitejs-remove-deprecated-import-meta-hot-accept-url` - [Removed Deprecated Features](https://vite.dev/guide/migration#removed-deprecated-features)
+  - `vitejs-remove-deprecated-import-meta-hot-accept` - [Removed Deprecated Features](https://vite.dev/guide/migration#removed-deprecated-features)
   - `vitejs-migrate-css-minify-to-lightning-css` - [CSS Minification by Lightning CSS](https://vite.dev/guide/migration#css-minification-by-lightning-css)
   - `vitejs-normalize-commonjs-interop-legacy-option` - [Consistent CommonJS Interop](https://vite.dev/guide/migration#consistent-commonjs-interop)
   - `vitejs-migrate-require-external-modules` - [Require Calls For Externalized Modules](https://vite.dev/guide/migration#require-calls-for-externalized-modules)

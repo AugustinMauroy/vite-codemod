@@ -24,7 +24,7 @@ nodes:
 
       - name: "Run registry codemod: remove deprecated import.meta.hot accept url"
         codemod:
-          source: "vitejs-remove-deprecated-import-meta-hot-accept-url"
+          source: "vitejs-remove-deprecated-import-meta-hot-accept"
 
       - name: "Run registry codemod: migrate css minify to lightning css"
         codemod:
