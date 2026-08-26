@@ -198,9 +198,13 @@ jobs:
         run: node --run test
 
       - name: Publish codemod
-        uses: codemod/publish-action@v1
-        with:
-          path: ${{ steps.find-codemod.outputs.codemod-path }}
+        env:
+          CODEMOD_PATH: ${{ steps.find-codemod.outputs.codemod-path }}
+          CODEMOD_AUTH_TOKEN: ${{ secrets.CODEMOD_PUBLISH }}
+        run: |
+          echo "🔐 Publishing codemod from $CODEMOD_PATH"
+          cd "$CODEMOD_PATH"
+          npx codemod@latest publish
 
       - name: Create release summary
         env:

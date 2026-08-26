@@ -1,9 +1,9 @@
 import type { Codemod, Edit, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
+import dedent from "dedent";
 import { getViteConfig } from "vitejs-codemod-utils/ast-grep/get-vite-config";
 import { getIdentStyle } from "vitejs-codemod-utils/ast-grep/indent";
 import { getLineBreak } from "vitejs-codemod-utils/ast-grep/line-break";
-import dedent from "dedent";
 
 const IMPORT_META_DEFINE = `'import.meta.url': '__vite_import_meta_url__'`;
 

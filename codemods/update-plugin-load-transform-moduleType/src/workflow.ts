@@ -1,9 +1,9 @@
 import type { Codemod } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
+import dedent from "dedent";
 import { getIdentStyle } from "vitejs-codemod-utils/ast-grep/indent";
 import { getLineBreak } from "vitejs-codemod-utils/ast-grep/line-break";
 import { findPairByKey } from "vitejs-codemod-utils/ast-grep/object-helpers";
-import dedent from "dedent";
 
 const WARNING = dedent`
 	// Expected warning:

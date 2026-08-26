@@ -1,5 +1,6 @@
 import type { Codemod, Edit, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
+import dedent from "dedent";
 import { getViteConfig } from "vitejs-codemod-utils/ast-grep/get-vite-config";
 import { getIdentStyle } from "vitejs-codemod-utils/ast-grep/indent";
 import { getLineBreak } from "vitejs-codemod-utils/ast-grep/line-break";
@@ -9,7 +10,6 @@ import {
 	findPairByKey,
 	normalizeObjectIndent,
 } from "vitejs-codemod-utils/ast-grep/object-helpers";
-import dedent from "dedent";
 
 type TextEdit = {
 	start: number;
