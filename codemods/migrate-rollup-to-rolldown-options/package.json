@@ -4,6 +4,7 @@
     "test": "npx codemod jssg test -l typescript ./src/workflow.ts"
   },
   "dependencies": {
-    "@jssg/utils": "^0.0.7"
+    "@jssg/utils": "^0.0.7",
+    "vitejs-codemod-utils": "*"
   }
 }

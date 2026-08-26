@@ -2,5 +2,8 @@
   "name": "vitejs-migrate-require-external-modules",
   "scripts": {
     "test": "npx codemod jssg test -l typescript ./src/workflow.ts"
+  },
+  "dependencies": {
+    "vitejs-codemod-utils": "*"
   }
 }

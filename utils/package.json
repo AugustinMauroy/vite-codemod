@@ -13,6 +13,7 @@
     "test": "npx codemod jssg exec ./tests/get-vite-config.test.ts && npx codemod jssg exec ./tests/object-helpers.test.ts && npx codemod jssg exec ./tests/rolldown-serializer.test.ts"
   },
   "dependencies": {
-    "@jssg/utils": "0.0.7"
+    "@jssg/utils": "0.0.7",
+    "dedent": "^1.7.2"
   }
 }
