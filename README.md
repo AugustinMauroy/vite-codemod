@@ -33,6 +33,10 @@ npx codemod workflow run -w /path/to/folder/containing/workflow.yaml
 
 See the [Codemod docs](https://go.codemod.com/cli-docs) for all CLI commands and options.
 
+## See all codemods
+
+You can find all codemods in the [codemods registry](https://app.codemod.com/registry?q=by:AugustinMauroy+vitejs).
+
 ## License
 
 MIT
