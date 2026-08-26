@@ -1,5 +1,5 @@
 {
-  "name": "@vitejs/migrate-rollup-to-rolldown-options",
+  "name": "vitejs-migrate-rollup-to-rolldown-options",
   "scripts": {
     "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
   },

@@ -1,8 +1,8 @@
 import type { Codemod, Edit, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
-import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
-import { getIdentStyle } from "@vitejs/codemod-utils/ast-grep/indent";
-import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
+import { getViteConfig } from "vitejs-codemod-utils/ast-grep/get-vite-config";
+import { getIdentStyle } from "vitejs-codemod-utils/ast-grep/indent";
+import { getLineBreak } from "vitejs-codemod-utils/ast-grep/line-break";
 import dedent from "dedent";
 
 const IMPORT_META_DEFINE = `'import.meta.url': '__vite_import_meta_url__'`;
@@ -10,13 +10,13 @@ const IMPORT_META_DEFINE = `'import.meta.url': '__vite_import_meta_url__'`;
 const INTRO_SNIPPET =
 	"intro: 'var __vite_import_meta_url__ = document.currentScript && document.currentScript.src'";
 
-import type { TextInsertion } from "@vitejs/codemod-utils/ast-grep/object-helpers";
+import type { TextInsertion } from "vitejs-codemod-utils/ast-grep/object-helpers";
 import {
 	applyInsertions,
 	findMatchingBraceIndex,
 	findObjectProperty,
 	normalizeObjectIndent,
-} from "@vitejs/codemod-utils/ast-grep/object-helpers";
+} from "vitejs-codemod-utils/ast-grep/object-helpers";
 
 function escapeRegExp(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

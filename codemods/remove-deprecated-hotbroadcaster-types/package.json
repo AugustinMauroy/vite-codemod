@@ -1,5 +1,5 @@
 {
-  "name": "@vitejs/remove-deprecated-hotbroadcaster-types",
+  "name": "vitejs-remove-deprecated-hotbroadcaster-types",
   "scripts": {
     "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
   },

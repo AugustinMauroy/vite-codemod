@@ -1,9 +1,9 @@
 {
-  "name": "@vitejs/remove-sass-legacy-api-option",
+  "name": "vitejs-remove-sass-legacy-api-option",
   "scripts": {
     "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
   },
   "dependencies": {
-    "@vitejs/codemod-utils": "*"
+    "vitejs-codemod-utils": "*"
   }
 }

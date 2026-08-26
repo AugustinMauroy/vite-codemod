@@ -1,12 +1,16 @@
 schema_version: "1.0"
-name: "@vitejs/update-resolve-conditions"
+name: "vitejs-update-resolve-conditions"
 version: 1.0.0
 description: "Update resolve.conditions handling"
-author: "maintainer"
+author: "Augustin Mauroy"
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
+
+keywords:
+  - vite
+  - vitejs
 
 targets:
   languages:

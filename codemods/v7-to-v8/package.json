@@ -1,5 +1,5 @@
 {
-  "name": "@vitejs/v7-to-v8",
+  "name": "vitejs-v7-to-v8",
   "scripts": {
     "test": "echo \"No tests for v7-to-v8\""
   }

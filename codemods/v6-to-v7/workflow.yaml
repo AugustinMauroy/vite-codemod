@@ -8,24 +8,24 @@ nodes:
     steps:
       - name: "Run registry codemod: remove sass legacy api option"
         codemod:
-          source: "@vitejs/remove-sass-legacy-api-option"
+          source: "vitejs-remove-sass-legacy-api-option"
 
       - name: "Run registry codemod: remove split vendor chunk plugin"
         codemod:
-          source: "@vitejs/remove-split-vendor-chunk-plugin"
+          source: "vitejs-remove-split-vendor-chunk-plugin"
 
       - name: "Run registry codemod: migrate transform index html hooks"
         codemod:
-          source: "@vitejs/migrate-transform-index-html-hooks"
+          source: "vitejs-migrate-transform-index-html-hooks"
 
       - name: "Run registry codemod: remove deprecated hotbroadcaster types"
         codemod:
-          source: "@vitejs/remove-deprecated-hotbroadcaster-types"
+          source: "vitejs-remove-deprecated-hotbroadcaster-types"
 
       - name: "Run registry codemod: update resolve conditions"
         codemod:
-          source: "@vitejs/update-resolve-conditions"
+          source: "vitejs-update-resolve-conditions"
 
       - name: "Run registry codemod: remove deprecated properties"
         codemod:
-          source: "@vitejs/remove-deprecated-properties"
+          source: "vitejs-remove-deprecated-properties"

@@ -6,8 +6,8 @@ import {
 	getIndentUnit,
 	getLeadingWhitespace,
 	type TextEdit,
-} from "@vitejs/codemod-utils/ast-grep/codemod-helpers";
-import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
+} from "vitejs-codemod-utils/ast-grep/codemod-helpers";
+import { getViteConfig } from "vitejs-codemod-utils/ast-grep/get-vite-config";
 
 const WARNING = "// Warning: Dynamic external module lists cannot be normalized automatically.";
 

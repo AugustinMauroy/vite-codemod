@@ -1,12 +1,16 @@
 schema_version: "1.0"
-name: "@vitejs/migrate-esbuild-to-oxc-options"
+name: "vitejs-migrate-esbuild-to-oxc-options"
 version: 1.0.0
 description: "Migrate esbuild options to oxc"
-author: "maintainer"
+author: "Augustin Mauroy"
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
+
+keywords:
+  - vite
+  - vitejs
 
 targets:
   languages:

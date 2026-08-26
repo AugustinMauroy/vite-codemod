@@ -210,7 +210,7 @@ author: <Your Name>
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
 
 targets:
   languages:

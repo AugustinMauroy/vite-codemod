@@ -1,20 +1,21 @@
 schema_version: "1.0"
-name: "@vitejs/v7-to-v8"
+name: "vitejs-v7-to-v8"
 version: 1.0.0
 description: "Vite 7 to 8 migration"
-author: "maintainer"
+author: "Augustin Mauroy"
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
+
+keywords:
+  - vite
+  - vitejs
 
 targets:
   languages:
     - javascript
     - typescript
-
-keywords:
-  - migration
 
 registry:
   access: public

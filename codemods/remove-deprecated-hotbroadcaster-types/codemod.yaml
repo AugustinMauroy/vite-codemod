@@ -1,12 +1,16 @@
 schema_version: "1.0"
-name: "@vitejs/remove-deprecated-hotbroadcaster-types"
+name: "vitejs-remove-deprecated-hotbroadcaster-types"
 version: 1.0.0
 description: "Remove deprecated HotBroadcaster types"
-author: "maintainer"
+author: "Augustin Mauroy"
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
+
+keywords:
+  - vite
+  - vitejs
 
 targets:
   languages:

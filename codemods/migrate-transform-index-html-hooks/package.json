@@ -1,5 +1,5 @@
 {
-  "name": "@vitejs/migrate-transform-index-html-hooks",
+  "name": "vitejs-migrate-transform-index-html-hooks",
   "scripts": {
     "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
   },

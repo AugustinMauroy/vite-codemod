@@ -1,5 +1,5 @@
 {
-  "name": "@vitejs/update-resolve-conditions",
+  "name": "vitejs-update-resolve-conditions",
   "scripts": {
     "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
   },

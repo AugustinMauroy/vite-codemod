@@ -1,11 +1,11 @@
 {
-  "name": "@vitejs/update-plugin-load-transform-moduleType",
+  "name": "vitejs-update-plugin-load-transform-moduleType",
   "scripts": {
     "test": "npx codemod@1.9.3 jssg test -l typescript ./src/workflow.ts"
   },
   "dependencies": {
     "@jssg/utils": "^0.0.8",
-    "@vitejs/codemod-utils": "*",
+    "vitejs-codemod-utils": "*",
     "dedent": "^1.7.2"
   }
 }

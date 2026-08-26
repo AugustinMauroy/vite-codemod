@@ -1,12 +1,16 @@
 schema_version: "1.0"
-name: "@vitejs/remove-deprecated-import-meta-hot-accept-url"
+name: "vitejs-remove-deprecated-import-meta-hot-accept-url"
 version: 1.0.0
 description: "Remove deprecated import.meta.hot accept URL"
-author: "maintainer"
+author: "Augustin Mauroy"
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
+
+keywords:
+  - vite
+  - vitejs
 
 targets:
   languages:

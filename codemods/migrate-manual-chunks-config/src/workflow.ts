@@ -1,14 +1,14 @@
 import type { Codemod, Edit, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
 import fs from "node:fs";
-import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
-import { getIdentStyle } from "@vitejs/codemod-utils/ast-grep/indent";
-import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
+import { getViteConfig } from "vitejs-codemod-utils/ast-grep/get-vite-config";
+import { getIdentStyle } from "vitejs-codemod-utils/ast-grep/indent";
+import { getLineBreak } from "vitejs-codemod-utils/ast-grep/line-break";
 import {
 	findObjectProperty,
 	findPairByKey,
 	normalizeObjectIndent,
-} from "@vitejs/codemod-utils/ast-grep/object-helpers";
+} from "vitejs-codemod-utils/ast-grep/object-helpers";
 
 const WARNING = "// Warning: Function-form manualChunks with side effects needs manual review.";
 

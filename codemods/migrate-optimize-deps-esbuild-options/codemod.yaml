@@ -1,12 +1,12 @@
 schema_version: "1.0"
-name: "@vitejs/migrate-optimize-deps-esbuild-options"
+name: "vitejs-migrate-optimize-deps-esbuild-options"
 version: 1.0.0
 description: "Migrate optimizeDeps esbuild options"
-author: "maintainer"
+author: "Augustin Mauroy"
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
 
 targets:
   languages:

@@ -1,8 +1,8 @@
 import type { Codemod, SgNode } from "codemod:ast-grep";
 import type JS from "codemod:ast-grep/langs/javascript";
-import { getViteConfig } from "@vitejs/codemod-utils/ast-grep/get-vite-config";
-import { getLineBreak } from "@vitejs/codemod-utils/ast-grep/line-break";
-import { findPairByKey } from "@vitejs/codemod-utils/ast-grep/object-helpers";
+import { getViteConfig } from "vitejs-codemod-utils/ast-grep/get-vite-config";
+import { getLineBreak } from "vitejs-codemod-utils/ast-grep/line-break";
+import { findPairByKey } from "vitejs-codemod-utils/ast-grep/object-helpers";
 
 const WARNING = "// Warning: Condition-order assumptions must be reviewed manually.";
 

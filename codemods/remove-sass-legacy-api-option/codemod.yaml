@@ -1,21 +1,21 @@
 schema_version: "1.0"
-name: "@vitejs/remove-sass-legacy-api-option"
+name: "vitejs-remove-sass-legacy-api-option"
 version: 1.0.0
 description: "Removed Sass legacy API support"
-author: "maintainer"
+author: "Augustin Mauroy"
 license: MIT
 workflow: workflow.yaml
 category: migration
-repository: https://github.com/vitejs/vite-codemod
+repository: https://github.com/AugustinMauroy/vite-codemod
+
+keywords:
+  - vite
+  - vitejs
 
 targets:
   languages:
     - javascript
     - typescript
-
-keywords:
-  - transformation
-  - migration
 
 registry:
   access: public

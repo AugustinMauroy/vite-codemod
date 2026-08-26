@@ -1,5 +1,5 @@
 {
-  "name": "@vitejs/codemod-utils",
+  "name": "vitejs-codemod-utils",
   "type": "module",
   "version": "0.0.0",
   "private": true,
